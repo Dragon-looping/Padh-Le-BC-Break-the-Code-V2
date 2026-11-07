@@ -1,0 +1,348 @@
+[
+  {
+    "id": "linear_regression",
+    "name": "Linear Regression",
+    "category": "regression",
+    "task_type": "regression",
+    "short_description": "Models a continuous outcome as a linear combination of input features using Ordinary Least Squares.",
+    "intuition": "Fits a straight line (or flat hyperplane in multi-dimensions) through the data points so that the total squared vertical distances from the points to the line are as small as possible.",
+    "mathematical_formula": "y = \\beta_0 + \\sum_{j=1}^p \\beta_j x_j + \\epsilon",
+    "step_by_step_working": [
+      "Center or standardize features if needed.",
+      "Calculate the weight matrix using the closed-form normal equation: beta = (X^T * X)^(-1) * X^T * y.",
+      "Predict target values: y_hat = X * beta.",
+      "Compute residuals and calculate evaluation metrics (MAE, RMSE, R²)."
+    ],
+    "parameters": [
+      {
+        "name": "fit_intercept",
+        "type": "bool",
+        "default": true,
+        "description": "Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations."
+      }
+    ],
+    "advantages": [
+      "Highly interpretable with intuitive, explainable coefficients.",
+      "Fastest training and inference speed of any regression model.",
+      "No hyperparameter tuning required."
+    ],
+    "limitations": [
+      "Assumes strict linearity between features and target.",
+      "Vulnerable to severe distortion from outliers and multicollinear features."
+    ],
+    "use_cases": [
+      "Predicting real estate sales prices from square footage and bedrooms.",
+      "Estimating future revenue growth based on marketing expenditure."
+    ],
+    "when_to_use": [
+      "When a fast, transparent baseline is needed.",
+      "When relationships between features and target are approximately linear."
+    ],
+    "when_to_avoid": [
+      "When non-linear relationships and complex interactions dominate the data.",
+      "When features outnumber samples ($p > n$)."
+    ],
+    "python_snippet": "from sklearn.linear_model import LinearRegression\nmodel = LinearRegression(fit_intercept=True)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Instantiates and fits Ordinary Least Squares linear regression. Coefficients can be inspected with model.coef_ and intercept with model.intercept_.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "fit_intercept": true
+    }
+  },
+  {
+    "id": "ridge_regression",
+    "name": "Ridge Regression",
+    "category": "regression",
+    "task_type": "regression",
+    "short_description": "Linear regression with L2 Tikhonov regularization penalty to mitigate multicollinearity and overfitting.",
+    "intuition": "Like linear regression, but pulls all coefficient sizes smoothly toward zero. It prevents any single feature from having a wildly disproportionate influence.",
+    "mathematical_formula": "Loss = \\text{MSE} + \\alpha \\sum_{j=1}^p \\beta_j^2",
+    "step_by_step_working": [
+      "Standardize all feature columns.",
+      "Add L2 penalty matrix alpha * I to X^T * X.",
+      "Solve regularized normal equation: beta = (X^T * X + alpha * I)^(-1) * X^T * y.",
+      "Generate predictions on standardized test features."
+    ],
+    "parameters": [
+      {
+        "name": "alpha",
+        "type": "float",
+        "default": 1.0,
+        "description": "Regularization strength; must be a positive float. Larger values specify stronger regularization.",
+        "allowed_range": "[0.001, 1000.0]"
+      }
+    ],
+    "advantages": [
+      "Stable even when features are highly correlated (multicollinearity).",
+      "Guarantees an invertible matrix solution even when p > n."
+    ],
+    "limitations": [
+      "Retains all features; does not perform sparse feature selection.",
+      "Features must be scaled before fitting."
+    ],
+    "use_cases": [
+      "Economic forecasting with hundreds of correlated economic indicators.",
+      "Sensor telemetry regression where sensors measure overlapping physical properties."
+    ],
+    "when_to_use": [
+      "When linear regression overfits due to multicollinear features.",
+      "When you want to keep all features in the model with restrained weights."
+    ],
+    "when_to_avoid": [
+      "When you need a sparse model with automatic feature selection (use Lasso instead)."
+    ],
+    "python_snippet": "from sklearn.linear_model import Ridge\nmodel = Ridge(alpha=1.0)\nmodel.fit(X_train_scaled, y_train)\ny_pred = model.predict(X_test_scaled)",
+    "code_explanation": "Ridge fits regularized weights with alpha=1.0. Features must be standardized so the L2 penalty affects all coefficients equally.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "alpha": 1.0
+    }
+  },
+  {
+    "id": "lasso_regression",
+    "name": "Lasso Regression",
+    "category": "regression",
+    "task_type": "regression",
+    "short_description": "Linear regression with L1 regularization penalty that drives redundant feature coefficients to exactly zero.",
+    "intuition": "Lasso penalizes the absolute sum of weights. Its geometric diamond constraint forces unneeded feature weights to hit zero, leaving you with a simplified model using only the essential features.",
+    "mathematical_formula": "Loss = \\text{MSE} + \\alpha \\sum_{j=1}^p |\\beta_j|",
+    "step_by_step_working": [
+      "Standardize all feature inputs.",
+      "Optimize coefficients using coordinate descent with L1 soft-thresholding.",
+      "Identify features whose weights shrink to exactly 0.0.",
+      "Predict continuous outcomes using the remaining sparse features."
+    ],
+    "parameters": [
+      {
+        "name": "alpha",
+        "type": "float",
+        "default": 0.1,
+        "description": "Constant that multiplies the L1 term. Defaults to 0.1.",
+        "allowed_range": "[0.001, 100.0]"
+      }
+    ],
+    "advantages": [
+      "Performs automatic feature selection, producing sparse and highly explainable models.",
+      "Reduces overfitting in high-dimensional datasets."
+    ],
+    "limitations": [
+      "If a group of features are highly correlated, Lasso arbitrarily selects just one.",
+      "Requires standardized features."
+    ],
+    "use_cases": [
+      "Gene expression analysis with thousands of candidate genes and few samples.",
+      "Click-through rate prediction with high-dimensional sparse bag-of-words features."
+    ],
+    "when_to_use": [
+      "When you have many features and suspect only a few are truly predictive.",
+      "When a compact, sparse model is required for fast production inference."
+    ],
+    "when_to_avoid": [
+      "When all features have genuine predictive value and none should be discarded."
+    ],
+    "python_snippet": "from sklearn.linear_model import Lasso\nmodel = Lasso(alpha=0.1)\nmodel.fit(X_train_scaled, y_train)\ny_pred = model.predict(X_test_scaled)",
+    "code_explanation": "Fits L1-regularized regression. Inspecting model.coef_ == 0 shows which features were safely eliminated by Lasso.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "alpha": 0.1
+    }
+  },
+  {
+    "id": "decision_tree_regressor",
+    "name": "Decision Tree Regressor",
+    "category": "regression",
+    "task_type": "regression",
+    "short_description": "Non-linear regression that recursively partitions feature space into rectangles, predicting the mean target in each leaf.",
+    "intuition": "Creates an inverted tree of simple questions (e.g., 'Is age > 40?'). When a query reaches a terminal leaf node, the model predicts the average target value of all training points that landed in that leaf.",
+    "mathematical_formula": "\\hat{y}_m = \\frac{1}{N_m} \\sum_{i \\in R_m} y_i",
+    "step_by_step_working": [
+      "Evaluate all candidate feature thresholds to find the split minimizing child mean squared error.",
+      "Split samples into left and right subsets.",
+      "Repeat recursively until stopping conditions (max_depth, min_samples_leaf) are reached.",
+      "Assign the average target value of the leaf as the prediction for any sample falling in it."
+    ],
+    "parameters": [
+      {
+        "name": "max_depth",
+        "type": "int",
+        "default": 5,
+        "description": "The maximum depth of the tree. Controls model complexity and prevents overfitting.",
+        "allowed_range": "[1, 30]"
+      },
+      {
+        "name": "min_samples_split",
+        "type": "int",
+        "default": 2,
+        "description": "The minimum number of samples required to split an internal node.",
+        "allowed_range": "[2, 50]"
+      }
+    ],
+    "advantages": [
+      "Captures complex non-linear relationships without feature transformations.",
+      "Completely invariant to monotonic feature scaling.",
+      "Visualizable and intuitive."
+    ],
+    "limitations": [
+      "Prone to heavy overfitting if allowed to grow deep without pruning.",
+      "Predicts step-wise constant values; cannot extrapolate beyond the min/max values seen in training."
+    ],
+    "use_cases": [
+      "Predicting manufacturing cycle times where distinct equipment thresholds trigger delays.",
+      "Estimating insurance claims based on rule-like driver risk segments."
+    ],
+    "when_to_use": [
+      "When relationships are non-linear or threshold-driven.",
+      "When you need a fast, interpretable tree structure."
+    ],
+    "when_to_avoid": [
+      "When continuous smooth extrapolation is required.",
+      "When high accuracy without tree-pruning tuning is desired."
+    ],
+    "python_snippet": "from sklearn.tree import DecisionTreeRegressor\nmodel = DecisionTreeRegressor(max_depth=5, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Fits a decision tree regressor capped at depth 5 to avoid overfitting.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "max_depth": 5,
+      "min_samples_split": 2
+    }
+  },
+  {
+    "id": "random_forest_regressor",
+    "name": "Random Forest Regressor",
+    "category": "regression",
+    "task_type": "regression",
+    "short_description": "An ensemble of de-correlated decision trees trained on bootstrap samples that averages predictions to slash variance.",
+    "intuition": "Instead of relying on a single tree that might overfit, build a forest of 100 diverse trees on random slices of data and features. Average their individual predictions to produce a smooth, stable, and accurate forecast.",
+    "mathematical_formula": "\\hat{y} = \\frac{1}{B} \\sum_{b=1}^B T_b(\\mathbf{x})",
+    "step_by_step_working": [
+      "Generate B bootstrap samples of the training data (sampling with replacement).",
+      "For each sample, grow a regression tree, randomly selecting a subset of features at each split.",
+      "Grow trees deep without pruning.",
+      "For a new test point, pass it down every tree in the forest and compute the average predicted value."
+    ],
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "int",
+        "default": 100,
+        "description": "The number of trees in the forest.",
+        "allowed_range": "[10, 500]"
+      },
+      {
+        "name": "max_depth",
+        "type": "int",
+        "default": 10,
+        "description": "Maximum depth of each decision tree in the ensemble.",
+        "allowed_range": "[1, 50]"
+      }
+    ],
+    "advantages": [
+      "Exceptional out-of-the-box accuracy on tabular data.",
+      "Highly resistant to overfitting compared to individual decision trees.",
+      "Provides robust feature importance metrics."
+    ],
+    "limitations": [
+      "Slower to train and requires more memory than linear models.",
+      "Cannot extrapolate trends beyond the training target range."
+    ],
+    "use_cases": [
+      "Predicting patient length of hospital stay.",
+      "Forecasting energy consumption in smart buildings."
+    ],
+    "when_to_use": [
+      "When non-linear interactions are present and top predictive performance is the priority.",
+      "When tabular data has mixed categorical and continuous columns."
+    ],
+    "when_to_avoid": [
+      "When ultra-fast sub-millisecond inference on low-power devices is required.",
+      "When a single explainable linear formula is legally mandatory."
+    ],
+    "python_snippet": "from sklearn.ensemble import RandomForestRegressor\nmodel = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Trains an ensemble of 100 regression trees in parallel. The .predict() method averages outputs across all trees.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "n_estimators": 100,
+      "max_depth": 10
+    }
+  },
+  {
+    "id": "gradient_boosting_regressor",
+    "name": "Gradient Boosting Regressor",
+    "category": "regression",
+    "task_type": "regression",
+    "short_description": "Sequentially builds an ensemble of shallow trees, where each new tree is trained to correct the residual errors of the previous ones.",
+    "intuition": "Unlike Random Forests which build trees in parallel, Gradient Boosting builds trees in a relay team. Tree 1 makes a rough prediction. Tree 2 specifically studies where Tree 1 made mistakes (the residuals) and predicts those mistakes. Tree 3 corrects the remaining errors, gradually refining accuracy.",
+    "mathematical_formula": "F_m(\\mathbf{x}) = F_{m-1}(\\mathbf{x}) + \\gamma_m h_m(\\mathbf{x})",
+    "step_by_step_working": [
+      "Initialize model with a constant prediction (mean of y).",
+      "For each boosting iteration: compute pseudo-residuals (negative gradient of loss).",
+      "Fit a shallow regression tree h_m(x) to predict the pseudo-residuals.",
+      "Scale the tree's output by the learning rate and add it to the running ensemble: F_m(x) = F_(m-1)(x) + lr * h_m(x).",
+      "Repeat until n_estimators iterations are completed."
+    ],
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "int",
+        "default": 100,
+        "description": "The number of boosting stages to perform.",
+        "allowed_range": "[10, 500]"
+      },
+      {
+        "name": "learning_rate",
+        "type": "float",
+        "default": 0.1,
+        "description": "Learning rate shrinks the contribution of each tree. Must be positive.",
+        "allowed_range": "[0.01, 1.0]"
+      },
+      {
+        "name": "max_depth",
+        "type": "int",
+        "default": 3,
+        "description": "Maximum depth of individual regression estimators.",
+        "allowed_range": "[1, 10]"
+      }
+    ],
+    "advantages": [
+      "State-of-the-art predictive accuracy on complex tabular benchmarks.",
+      "Flexible loss functions (least squares, least absolute deviation, Huber).",
+      "Strong modeling of subtle non-linear interactions."
+    ],
+    "limitations": [
+      "Sequential training makes it slower than parallel Random Forests.",
+      "More hyperparameters to tune; can overfit if learning rate is too high or trees are too deep."
+    ],
+    "use_cases": [
+      "Financial risk modeling and algorithmic pricing.",
+      "Predicting flight delay durations based on weather and air traffic patterns."
+    ],
+    "when_to_use": [
+      "When maximizing predictive accuracy (RMSE / R²) is the top objective.",
+      "When dataset has structured numerical features with subtle interdependencies."
+    ],
+    "when_to_avoid": [
+      "When training time must be instantaneous.",
+      "When data is noisy with severe mislabeled target values."
+    ],
+    "python_snippet": "from sklearn.ensemble import GradientBoostingRegressor\nmodel = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Trains a gradient boosted ensemble of 100 shallow trees sequentially, each minimizing residual loss with learning_rate=0.1.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "n_estimators": 100,
+      "learning_rate": 0.1,
+      "max_depth": 3
+    }
+  }
+]

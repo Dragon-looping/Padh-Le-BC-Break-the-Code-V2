@@ -1,0 +1,136 @@
+[
+  {
+    "id": "lesson-u1-l1",
+    "unit": "Unit 1",
+    "module": "Foundations of Machine Learning",
+    "title": "Introduction to Machine Learning and Problem Formulation",
+    "order": 1,
+    "level": "beginner",
+    "estimated_minutes": 20,
+    "learning_objectives": [
+      "Understand what Machine Learning is and how it differs from traditional programming.",
+      "Identify the core components of an ML problem: Experience (E), Task (T), and Performance (P).",
+      "Formulate real-world business challenges into structured machine learning tasks."
+    ],
+    "explanation": "In traditional programming, human engineers write explicit rule-based algorithms: inputs go through hardcoded rules to produce outputs. In Machine Learning, the system takes inputs and observed past outputs, and learns the mapping rules automatically. Tom Mitchell's formal definition states: A computer program is said to learn from experience E with respect to some class of tasks T and performance measure P, if its performance at tasks in T, as measured by P, improves with experience E.",
+    "definitions": [
+      {
+        "term": "Machine Learning",
+        "definition": "The study of computer algorithms that improve automatically through experience and by the use of data."
+      },
+      {
+        "term": "Target / Label",
+        "definition": "The variable or outcome we want the model to predict for new, unseen data."
+      },
+      {
+        "term": "Feature Vector",
+        "definition": "A mathematical representation of numerical or encoded attributes describing a single data sample."
+      }
+    ],
+    "mathematical_explanation": "A machine learning model seeks a mathematical function $f: \\mathcal{X} \\rightarrow \\mathcal{Y}$ parameterized by $\\theta$ such that given an input feature vector $\\mathbf{x} \\in \\mathcal{X}$, the predicted output $\\hat{y} = f(\\mathbf{x}; \\theta)$ minimizes an empirical loss function $\\mathcal{L}(y, \\hat{y})$.",
+    "real_world_example": "Spam filtering: Task T is classifying incoming emails as spam or inbox; Experience E is historical emails with user spam marks; Performance P is classification accuracy or F1 score.",
+    "step_by_step_working": [
+      "Define the business objective and measurable goal.",
+      "Frame the problem: Is it supervised or unsupervised? Regression or classification?",
+      "Gather relevant historical training data with high-quality ground-truth labels.",
+      "Select an appropriate evaluation metric aligned with business priorities.",
+      "Train a baseline model and benchmark its performance against simple heuristics."
+    ],
+    "python_code": "# Quick demonstration of learning a mapping function using scikit-learn\nimport numpy as np\nfrom sklearn.linear_model import LinearRegression\n\n# Input features (Experience: study hours)\nX = np.array([[1], [2], [3], [4], [5]])\n# Ground truth target (Exam score)\ny = np.array([52, 60, 68, 79, 91])\n\n# Instantiate and train model\nmodel = LinearRegression()\nmodel.fit(X, y)\n\n# Predict score for a student studying 6 hours\nnew_student_hours = np.array([[6]])\npredicted_score = model.predict(new_student_hours)\nprint(f'Learned weight (slope): {model.coef_[0]:.2f}')\nprint(f'Learned bias (intercept): {model.intercept_:.2f}')\nprint(f'Predicted score for 6 hours: {predicted_score[0]:.2f}')",
+    "code_explanation": "We use scikit-learn's LinearRegression to fit the mathematical relationship between study hours and exam scores. The .fit() method optimizes the slope and intercept parameters using ordinary least squares. The .predict() method uses the fitted equation to forecast future outcomes.",
+    "advantages": [
+      "Handles complex patterns that are impossible for humans to formulate as explicit if-else rules.",
+      "Adapts and improves automatically when fed fresh training data."
+    ],
+    "limitations": [
+      "Relies entirely on data quality; biased or garbage data yields garbage predictions (GIGO).",
+      "Requires careful verification to avoid overfitting to historical quirks."
+    ],
+    "common_mistakes": [
+      "Jumping into modeling without clearly framing whether the task is classification or regression.",
+      "Not establishing a simple baseline before testing complex algorithms."
+    ],
+    "related_concepts": ["ai-ml-dl", "dataset-features-target", "supervised-unsupervised"],
+    "knowledge_check": [
+      {
+        "id": "q1",
+        "question": "Which of the following defines supervised learning?",
+        "options": [
+          {"id": "a", "text": "Learning without any ground truth labels"},
+          {"id": "b", "text": "Learning an input-to-output mapping from labeled training pairs"},
+          {"id": "c", "text": "Grouping data points based solely on geometric distance"},
+          {"id": "d", "text": "Writing explicit if-else logic by hand"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "Supervised learning relies on paired input features and target labels to discover predictive patterns."
+      }
+    ]
+  },
+  {
+    "id": "lesson-u1-l2",
+    "unit": "Unit 1",
+    "module": "Foundations of Machine Learning",
+    "title": "Data Preprocessing and Leakage-Safe Pipelines",
+    "order": 2,
+    "level": "beginner",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand why raw datasets require cleaning, imputation, encoding, and scaling.",
+      "Learn what data leakage is and why it destroys real-world model reliability.",
+      "Build scikit-learn ColumnTransformers and Pipelines that fit only on training data."
+    ],
+    "explanation": "Machine learning algorithms are mathematical processors: they cannot compute on missing values, string text, or mismatched scales without preprocessing. Crucially, any statistical quantity calculated during preprocessing (such as the mean of a feature, median for imputation, or one-hot vocabulary) must be computed exclusively from the training split. If test data statistics leak into training, model evaluation becomes falsely optimistic.",
+    "definitions": [
+      {
+        "term": "Data Leakage",
+        "definition": "When information from outside the training dataset (such as test or validation targets/distributions) is mistakenly used to train the model."
+      },
+      {
+        "term": "Imputation",
+        "definition": "The process of replacing missing data points with substituted statistical values (mean, median, mode) or algorithmic estimates."
+      },
+      {
+        "term": "Standardization",
+        "definition": "Rescaling features so they have a mean of 0 and a standard deviation of 1 ($z = \\frac{x - \\mu}{\\sigma}$)."
+      }
+    ],
+    "mathematical_explanation": "Standard scaling computes: $z_i = \\frac{x_i - \\mu_{train}}{\\sigma_{train}}$. Crucially, test sample $x_{test}$ must be transformed using $\\mu_{train}$ and $\\sigma_{train}$, never $\\mu_{test}$.",
+    "real_world_example": "If you scale the entire dataset before splitting, your test set mean is already baked into the training set scaler, inflating performance metrics and failing when deployed to live users.",
+    "step_by_step_working": [
+      "Split your raw dataset into train and test sets first.",
+      "Separate numeric and categorical feature columns.",
+      "Build an imputation pipeline for missing numeric values (median) and categorical values (most frequent).",
+      "One-hot encode categorical features with handle_unknown='ignore'.",
+      "Scale numeric features with StandardScaler inside a scikit-learn Pipeline.",
+      "Fit the pipeline on X_train only and transform X_test."
+    ],
+    "python_code": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Sample dataset\ndf = pd.DataFrame({\n    'age': [25, 30, np.nan, 45, 50, 35],\n    'income': [50000, 60000, 75000, np.nan, 120000, 80000],\n    'education': ['Bachelors', 'Masters', 'Bachelors', 'PhD', 'Masters', 'Bachelors'],\n    'purchased': [0, 1, 0, 1, 1, 0]\n})\n\nX = df.drop(columns=['purchased'])\ny = df['purchased']\n\n# 1. Split FIRST to prevent data leakage\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)\n\n# 2. Build preprocessing pipelines\nnumeric_features = ['age', 'income']\ncategorical_features = ['education']\n\nnumeric_transformer = Pipeline([\n    ('imputer', SimpleImputer(strategy='median')),\n    ('scaler', StandardScaler())\n])\n\ncategorical_transformer = Pipeline([\n    ('imputer', SimpleImputer(strategy='most_frequent')),\n    ('encoder', OneHotEncoder(handle_unknown='ignore'))\n])\n\npreprocessor = ColumnTransformer([\n    ('num', numeric_transformer, numeric_features),\n    ('cat', categorical_transformer, categorical_features)\n])\n\n# 3. Combine with estimator\nclf = Pipeline([\n    ('prep', preprocessor),\n    ('model', RandomForestClassifier(random_state=42))\n])\n\n# Fit strictly on training data\nclf.fit(X_train, y_train)\nscore = clf.score(X_test, y_test)\nprint(f'Test accuracy: {score:.2f}')",
+    "code_explanation": "By putting the imputer, scaler, encoder, and classifier inside a single scikit-learn Pipeline, call to .fit() fits the transformers only on the training split, completely guaranteeing zero data leakage.",
+    "advantages": [
+      "Completely prevents data leakage during training, cross-validation, and inference.",
+      "Produces a self-contained deployable bundle that handles raw inputs directly."
+    ],
+    "limitations": [
+      "Requires explicit typing and column identification for numeric vs categorical inputs."
+    ],
+    "common_mistakes": [
+      "Calling fit_transform() on the whole dataset before train_test_split().",
+      "Not handling unseen categorical levels in test data using handle_unknown='ignore'."
+    ],
+    "related_concepts": ["preprocessing", "missing-values", "encoding-scaling", "train-val-test"],
+    "knowledge_check": [
+      {
+        "id": "q2",
+        "question": "What is the danger of standardizing your data before splitting into train and test sets?",
+        "options": [
+          {"id": "a", "text": "It speeds up training unnecessarily"},
+          {"id": "b", "text": "It causes data leakage by leaking test set statistics into the training phase"},
+          {"id": "c", "text": "It turns numeric columns into strings"},
+          {"id": "d", "text": "It raises a syntax error in scikit-learn"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "Standardizing before splitting leaks test set mean and standard deviation into the training pipeline, leading to over-optimistic evaluation."
+      }
+    ]
+  }
+]

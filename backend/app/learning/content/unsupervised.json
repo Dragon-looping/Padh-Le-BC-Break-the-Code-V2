@@ -1,0 +1,227 @@
+[
+  {
+    "id": "kmeans",
+    "name": "K-Means Clustering",
+    "category": "unsupervised",
+    "task_type": "clustering",
+    "short_description": "Partitions data into K non-overlapping clusters by iteratively assigning samples to closest centroids.",
+    "intuition": "Scatters K pins randomly, pulls points into the nearest pin's group, recalculates the center of each group, and repeats until pins stop moving.",
+    "mathematical_formula": "\\min_{\\mathbf{S}} \\sum_{k=1}^K \\sum_{\\mathbf{x} \\in S_k} \\|\\mathbf{x} - \\boldsymbol{\\mu}_k\\|^2",
+    "step_by_step_working": [
+      "Standardize all feature variables.",
+      "Initialize K cluster centroids using k-means++.",
+      "Assign each sample to its nearest centroid based on Euclidean distance.",
+      "Recompute centroids as the mean of assigned data points.",
+      "Repeat until assignments stabilize or maximum iterations are reached."
+    ],
+    "parameters": [
+      {
+        "name": "n_clusters",
+        "type": "int",
+        "default": 3,
+        "description": "The number of clusters to form as well as the number of centroids to generate.",
+        "allowed_range": "[2, 20]"
+      }
+    ],
+    "advantages": [
+      "Scales efficiently to large datasets.",
+      "Fast convergence and intuitive cluster centers."
+    ],
+    "limitations": [
+      "Number of clusters K must be chosen in advance.",
+      "Assumes spherical, equally sized clusters."
+    ],
+    "use_cases": [
+      "Customer demographic segmentation.",
+      "Image color quantization."
+    ],
+    "when_to_use": [
+      "When clusters are approximately spherical and well-separated.",
+      "When an initial exploratory clustering is needed quickly."
+    ],
+    "when_to_avoid": [
+      "When clusters have irregular shapes, rings, or widely differing densities."
+    ],
+    "python_snippet": "from sklearn.cluster import KMeans\nkmeans = KMeans(n_clusters=3, random_state=42)\nlabels = kmeans.fit_predict(X_scaled)",
+    "code_explanation": "Fits K-Means and returns cluster label assignments for each point.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": false,
+    "default_hyperparameters": {
+      "n_clusters": 3
+    }
+  },
+  {
+    "id": "agglomerative_clustering",
+    "name": "Hierarchical Agglomerative Clustering",
+    "category": "unsupervised",
+    "task_type": "clustering",
+    "short_description": "Bottom-up hierarchical clustering that successively merges closest pairs of clusters into a tree (dendrogram).",
+    "intuition": "Every point starts as its own tiny cluster. At each step, the two closest clusters merge into one, building an entire family tree of clusters.",
+    "mathematical_formula": "d_{Ward}(A, B) = \\frac{|A||B|}{|A|+|B|} \\|\\boldsymbol{\\mu}_A - \\boldsymbol{\\mu}_B\\|^2",
+    "step_by_step_working": [
+      "Compute pairwise distance matrix between all samples.",
+      "Assign each sample to its own cluster of size 1.",
+      "Find the two clusters with the minimum linkage distance (Ward, complete, or average).",
+      "Merge them into a single parent cluster.",
+      "Repeat until all samples belong to one root cluster; cut tree at desired height."
+    ],
+    "parameters": [
+      {
+        "name": "n_clusters",
+        "type": "int",
+        "default": 3,
+        "description": "The number of clusters to find.",
+        "allowed_range": "[2, 20]"
+      },
+      {
+        "name": "linkage",
+        "type": "str",
+        "default": "ward",
+        "description": "Linkage criterion ('ward', 'complete', 'average', 'single').",
+        "options": ["ward", "complete", "average", "single"]
+      }
+    ],
+    "advantages": [
+      "Produces an interpretable dendrogram tree showing data hierarchies at all granularities.",
+      "No initial random centroid seeding needed."
+    ],
+    "limitations": [
+      "Computationally heavy: O(n^2) memory and O(n^3) time complexity; fails on large datasets.",
+      "Cannot undo previous merge decisions."
+    ],
+    "use_cases": [
+      "Phylogenetic biology and evolutionary taxonomy trees.",
+      "Organizational structural analysis."
+    ],
+    "when_to_use": [
+      "When hierarchical relationships and dendrogram visualizations are required.",
+      "When dataset has under 5,000 samples."
+    ],
+    "when_to_avoid": [
+      "On large datasets with tens of thousands of samples."
+    ],
+    "python_snippet": "from sklearn.cluster import AgglomerativeClustering\nmodel = AgglomerativeClustering(n_clusters=3, linkage='ward')\nlabels = model.fit_predict(X_scaled)",
+    "code_explanation": "Fits hierarchical clustering using Ward linkage.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": false,
+    "default_hyperparameters": {
+      "n_clusters": 3,
+      "linkage": "ward"
+    }
+  },
+  {
+    "id": "dbscan",
+    "name": "DBSCAN",
+    "category": "unsupervised",
+    "task_type": "clustering",
+    "short_description": "Density-Based Spatial Clustering finding core samples of high density and expanding clusters, flagging outliers as noise.",
+    "intuition": "Walks through crowded areas. If a point has enough neighbors within reach (eps), it starts a cluster and keeps pulling in neighboring crowded points. Isolated loners are marked as noise.",
+    "mathematical_formula": "N_\\epsilon(\\mathbf{p}) = \\{\\mathbf{q} \\in D : \\text{dist}(\\mathbf{p}, \\mathbf{q}) \\le \\epsilon\\}",
+    "step_by_step_working": [
+      "For each point, count neighbors within radius eps.",
+      "If count >= min_samples, designate point as a Core Point and start a new cluster.",
+      "Iteratively collect all density-reachable points from core points.",
+      "Border points within eps of a core point join the cluster.",
+      "Any point not reachable from any core point is labeled as noise (-1)."
+    ],
+    "parameters": [
+      {
+        "name": "eps",
+        "type": "float",
+        "default": 0.5,
+        "description": "The maximum distance between two samples for one to be considered as in the neighborhood of the other.",
+        "allowed_range": "[0.05, 5.0]"
+      },
+      {
+        "name": "min_samples",
+        "type": "int",
+        "default": 5,
+        "description": "The number of samples in a neighborhood for a point to be considered as a core point.",
+        "allowed_range": "[2, 50]"
+      }
+    ],
+    "advantages": [
+      "Does not require pre-specifying the number of clusters.",
+      "Discovers arbitrarily shaped clusters (e.g. concentric circles or moons).",
+      "Explicitly isolates and flags noisy anomaly outliers."
+    ],
+    "limitations": [
+      "Sensitive to the choice of eps and min_samples.",
+      "Struggles when clusters have substantially different densities."
+    ],
+    "use_cases": [
+      "GPS spatial anomaly and traffic congestion cluster discovery.",
+      "Astronomical star cluster grouping."
+    ],
+    "when_to_use": [
+      "When clusters have irregular non-spherical shapes.",
+      "When robust outlier and noise detection is required."
+    ],
+    "when_to_avoid": [
+      "When data has varying density gradients or very high dimensions."
+    ],
+    "python_snippet": "from sklearn.cluster import DBSCAN\ndb = DBSCAN(eps=0.5, min_samples=5)\nlabels = db.fit_predict(X_scaled)",
+    "code_explanation": "Identifies dense clusters and assigns noise points a label of -1.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": false,
+    "default_hyperparameters": {
+      "eps": 0.5,
+      "min_samples": 5
+    }
+  },
+  {
+    "id": "pca",
+    "name": "Principal Component Analysis (PCA)",
+    "category": "unsupervised",
+    "task_type": "dimensionality_reduction",
+    "short_description": "Projects high-dimensional data onto orthogonal axes that maximize dataset variance.",
+    "intuition": "Finds the best angles to view a 3D or high-dimensional object so you can see almost all its structure in a flat 2D shadow.",
+    "mathematical_formula": "\\mathbf{\\Sigma} = \\frac{1}{n-1}\\mathbf{X}^T \\mathbf{X}, \\quad \\mathbf{\\Sigma}\\mathbf{v}_i = \\lambda_i \\mathbf{v}_i",
+    "step_by_step_working": [
+      "Standardize features to zero mean and unit variance.",
+      "Compute covariance matrix of standardized features.",
+      "Compute eigenvectors and eigenvalues via SVD.",
+      "Sort components by descending eigenvalue magnitude.",
+      "Transform dataset into reduced principal component coordinates."
+    ],
+    "parameters": [
+      {
+        "name": "n_components",
+        "type": "int",
+        "default": 2,
+        "description": "Number of principal components to keep.",
+        "allowed_range": "[1, 50]"
+      }
+    ],
+    "advantages": [
+      "Drastically reduces storage and compute time for downstream ML models.",
+      "Eliminates multicollinearity completely by creating orthogonal features."
+    ],
+    "limitations": [
+      "Composite components are harder to interpret than original named features.",
+      "Captures only linear relationships."
+    ],
+    "use_cases": [
+      "Visualizing high-dimensional customer or genomic profiles in 2D/3D.",
+      "Preprocessing collinear features before regression modeling."
+    ],
+    "when_to_use": [
+      "When you have dozens or hundreds of correlated features.",
+      "When you need to visualize multi-dimensional data."
+    ],
+    "when_to_avoid": [
+      "When individual original feature names and units must be preserved for compliance."
+    ],
+    "python_snippet": "from sklearn.decomposition import PCA\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X_scaled)",
+    "code_explanation": "Projects scaled data onto the top 2 principal components.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": false,
+    "default_hyperparameters": {
+      "n_components": 2
+    }
+  }
+]

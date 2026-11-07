@@ -1,0 +1,430 @@
+[
+  {
+    "id": "logistic_regression",
+    "name": "Logistic Regression",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Models class probabilities using a linear combination of features passed through a sigmoid function.",
+    "intuition": "Draws a straight linear decision boundary between classes, converting raw scores into calibrated probabilities (0% to 100%).",
+    "mathematical_formula": "P(y=1|\\mathbf{x}) = \\frac{1}{1 + e^{-(\\mathbf{w}^T \\mathbf{x} + b)}}",
+    "step_by_step_working": [
+      "Standardize continuous feature inputs.",
+      "Calculate linear log-odds: z = w^T * x + b.",
+      "Pass through sigmoid curve to yield probability p = 1 / (1 + exp(-z)).",
+      "Compute binary cross-entropy loss against true labels.",
+      "Optimize weights iteratively using L-BFGS or gradient descent."
+    ],
+    "parameters": [
+      {
+        "name": "C",
+        "type": "float",
+        "default": 1.0,
+        "description": "Inverse of regularization strength; smaller values specify stronger regularization.",
+        "allowed_range": "[0.001, 1000.0]"
+      },
+      {
+        "name": "max_iter",
+        "type": "int",
+        "default": 200,
+        "description": "Maximum number of iterations taken for the solvers to converge.",
+        "allowed_range": "[50, 2000]"
+      }
+    ],
+    "advantages": [
+      "Fast, stable, and outputs well-calibrated probabilities.",
+      "Highly interpretable through odds ratios.",
+      "Resistant to overfitting when regularized with appropriate C."
+    ],
+    "limitations": [
+      "Cannot model non-linear boundaries without manual feature engineering.",
+      "Can struggle when classes have complex multi-modal distributions."
+    ],
+    "use_cases": [
+      "Credit card transaction fraud scoring.",
+      "Customer churn prediction."
+    ],
+    "when_to_use": [
+      "When a fast, explainable baseline is required.",
+      "When calibrated probabilities are needed to set custom decision thresholds."
+    ],
+    "when_to_avoid": [
+      "When decision boundaries are known to be non-linear."
+    ],
+    "python_snippet": "from sklearn.linear_model import LogisticRegression\nmodel = LogisticRegression(C=1.0, max_iter=200, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Fits a regularized logistic regression model and computes class predictions.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "C": 1.0,
+      "max_iter": 200
+    }
+  },
+  {
+    "id": "knn_classifier",
+    "name": "K-Nearest Neighbors Classifier",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Non-parametric lazy learner classifying query instances by taking a majority vote of the K nearest neighbors.",
+    "intuition": "Looks at the K closest training examples in feature space. If 4 out of 5 closest points are Class A, it classifies the new point as Class A.",
+    "mathematical_formula": "d(\\mathbf{p}, \\mathbf{q}) = \\sqrt{\\sum_{i=1}^n (p_i - q_i)^2}, \\quad \\hat{y} = \\text{mode}\\{y_j : j \\in \\mathcal{N}_K\\}",
+    "step_by_step_working": [
+      "Standardize all feature coordinates to eliminate scale bias.",
+      "Store training feature vectors in memory (no explicit training phase).",
+      "For a new query point, compute Euclidean distance to every training sample.",
+      "Sort samples by distance and identify the K smallest distances.",
+      "Assign the most frequent class label among the K neighbors as the prediction."
+    ],
+    "parameters": [
+      {
+        "name": "n_neighbors",
+        "type": "int",
+        "default": 5,
+        "description": "Number of neighbors to use by default for k-neighbors queries.",
+        "allowed_range": "[1, 50]"
+      },
+      {
+        "name": "weights",
+        "type": "str",
+        "default": "uniform",
+        "description": "Weight function used in prediction ('uniform' or 'distance').",
+        "options": ["uniform", "distance"]
+      }
+    ],
+    "advantages": [
+      "Naturally handles multi-class problems and irregular non-linear decision regions.",
+      "No underlying assumptions about data distribution."
+    ],
+    "limitations": [
+      "Inference slows down on large datasets ($O(n \\cdot d)$ per prediction).",
+      "Degrades severely with high-dimensional data (curse of dimensionality)."
+    ],
+    "use_cases": [
+      "Handwriting recognition and digit optical character classification.",
+      "User recommendation based on neighbor similarity."
+    ],
+    "when_to_use": [
+      "When dataset has modest sample size (<50k rows) and low feature dimensions (<30).",
+      "When non-linear decision boundaries exist and fast training is needed."
+    ],
+    "when_to_avoid": [
+      "When dataset is huge or sub-millisecond inference latency is required."
+    ],
+    "python_snippet": "from sklearn.neighbors import KNeighborsClassifier\nmodel = KNeighborsClassifier(n_neighbors=5, weights='uniform')\nmodel.fit(X_train_scaled, y_train)\ny_pred = model.predict(X_test_scaled)",
+    "code_explanation": "Fits KNN with 5 neighbors. Features must be standardized so distance metrics are not biased by unit magnitude.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "n_neighbors": 5,
+      "weights": "uniform"
+    }
+  },
+  {
+    "id": "decision_tree_classifier",
+    "name": "Decision Tree Classifier",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Recursively partitions feature space using Gini impurity or entropy to create hierarchical if-else decision rules.",
+    "intuition": "Plays a game of 20 questions with your data, picking questions that best separate classes into pure subgroups.",
+    "mathematical_formula": "I_G(p) = 1 - \\sum_{k=1}^C p_k^2",
+    "step_by_step_working": [
+      "Compute initial Gini impurity at current node.",
+      "Evaluate all candidate feature thresholds to find the split minimizing weighted child Gini impurity.",
+      "Split training samples into left and right subsets.",
+      "Recurse until max depth, minimum sample counts, or pure leaves are attained.",
+      "For inference, navigate down the tree and output the majority class at the terminal leaf."
+    ],
+    "parameters": [
+      {
+        "name": "max_depth",
+        "type": "int",
+        "default": 5,
+        "description": "The maximum depth of the tree.",
+        "allowed_range": "[1, 30]"
+      },
+      {
+        "name": "min_samples_split",
+        "type": "int",
+        "default": 2,
+        "description": "The minimum number of samples required to split an internal node.",
+        "allowed_range": "[2, 50]"
+      }
+    ],
+    "advantages": [
+      "Completely interpretable and visualizable as a flowchart.",
+      "No feature scaling or transformation required.",
+      "Handles categorical and numerical features effortlessly."
+    ],
+    "limitations": [
+      "High variance: slight changes in training data produce completely different trees.",
+      "Prone to severe overfitting if depth is unconstrained."
+    ],
+    "use_cases": [
+      "Medical triage protocol determination.",
+      "Loan underwriting rule generation."
+    ],
+    "when_to_use": [
+      "When business stakeholders require clear, visual decision paths.",
+      "When speed and simplicity take precedence over complex ensembles."
+    ],
+    "when_to_avoid": [
+      "When highest possible classification accuracy on complex datasets is needed."
+    ],
+    "python_snippet": "from sklearn.tree import DecisionTreeClassifier\nmodel = DecisionTreeClassifier(max_depth=5, min_samples_split=2, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Trains a pruned decision tree classifier capped at depth 5.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "max_depth": 5,
+      "min_samples_split": 2
+    }
+  },
+  {
+    "id": "random_forest_classifier",
+    "name": "Random Forest Classifier",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Ensemble of diverse decision trees built on bootstrap data slices and random feature subsets with majority voting.",
+    "intuition": "Combines votes from 100 independently trained trees. Even if individual trees make mistakes on certain patterns, their collective majority vote is remarkably accurate and reliable.",
+    "mathematical_formula": "\\hat{y} = \\text{mode}\\{T_1(\\mathbf{x}), T_2(\\mathbf{x}), \\dots, T_B(\\mathbf{x})\\}",
+    "step_by_step_working": [
+      "Draw B bootstrap datasets (sampling with replacement) from the training data.",
+      "For each bootstrap sample, build an unpruned decision tree.",
+      "At every internal node split, randomly choose a subset of features (typically sqrt(p)).",
+      "During prediction, pass query point through all B trees.",
+      "Aggregate individual tree votes and return the class with the most votes."
+    ],
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "int",
+        "default": 100,
+        "description": "The number of trees in the forest.",
+        "allowed_range": "[10, 500]"
+      },
+      {
+        "name": "max_depth",
+        "type": "int",
+        "default": 10,
+        "description": "Maximum depth of trees.",
+        "allowed_range": "[1, 50]"
+      }
+    ],
+    "advantages": [
+      "One of the most accurate and reliable general-purpose tabular classification models.",
+      "Highly resilient to overfitting and outliers.",
+      "Computes informative feature importance scores."
+    ],
+    "limitations": [
+      "Large model size and memory footprint.",
+      "Cannot be directly visualized as a simple flowchart like a single tree."
+    ],
+    "use_cases": [
+      "Customer churn prediction and retention modeling.",
+      "Disease diagnosis from clinical health profiles."
+    ],
+    "when_to_use": [
+      "When working with tabular data and seeking superior predictive performance without extensive tuning.",
+      "When feature interactions are complex."
+    ],
+    "when_to_avoid": [
+      "When extreme low-latency prediction on microcontrollers is needed."
+    ],
+    "python_snippet": "from sklearn.ensemble import RandomForestClassifier\nmodel = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Builds 100 trees in parallel and aggregates votes for robust classification.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "n_estimators": 100,
+      "max_depth": 10
+    }
+  },
+  {
+    "id": "naive_bayes",
+    "name": "Gaussian Naive Bayes",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Probabilistic classifier applying Bayes theorem under the strong naive assumption that features are conditionally independent.",
+    "intuition": "Calculates the probability of each class given the observed features by multiplying individual feature probabilities together, assuming each feature clue is completely independent of the others.",
+    "mathematical_formula": "P(y|\\mathbf{x}) \\propto P(y) \\prod_{i=1}^d P(x_i|y), \\quad P(x_i|y) = \\frac{1}{\\sqrt{2\\pi\\sigma_y^2}} e^{-\\frac{(x_i - \\mu_y)^2}{2\\sigma_y^2}}",
+    "step_by_step_working": [
+      "Calculate prior class probabilities P(y) from training label frequencies.",
+      "Compute mean and variance for each feature conditioned on each class.",
+      "For a new query point, evaluate the Gaussian probability density of each feature for each class.",
+      "Multiply prior probability by feature likelihoods for each candidate class.",
+      "Select the class with the maximum posterior probability."
+    ],
+    "parameters": [
+      {
+        "name": "var_smoothing",
+        "type": "float",
+        "default": 1e-9,
+        "description": "Portion of the largest variance of all features that is added to variances for calculation stability.",
+        "allowed_range": "[1e-12, 1e-2]"
+      }
+    ],
+    "advantages": [
+      "Extremely fast training and prediction with minimal memory overhead.",
+      "Performs surprisingly well even on small datasets and high-dimensional text.",
+      "Not sensitive to irrelevant features."
+    ],
+    "limitations": [
+      "The 'naive' assumption of complete feature independence is rarely true in real life.",
+      "Outputs extreme probability estimates near 0 or 1."
+    ],
+    "use_cases": [
+      "Spam email detection and text sentiment analysis.",
+      "Real-time medical symptom screening."
+    ],
+    "when_to_use": [
+      "When dealing with small datasets or text/bag-of-words classifications.",
+      "When training speed must be virtually instantaneous."
+    ],
+    "when_to_avoid": [
+      "When features have strong mutual correlations and dependencies."
+    ],
+    "python_snippet": "from sklearn.naive_bayes import GaussianNB\nmodel = GaussianNB()\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Computes class priors and Gaussian feature likelihoods for instant classification.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "var_smoothing": 1e-9
+    }
+  },
+  {
+    "id": "svm_classifier",
+    "name": "Support Vector Machine Classifier (SVC)",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Finds the optimal separating hyperplane that maximizes the geometric margin between classes in high-dimensional space.",
+    "intuition": "Draws a wide highway between two classes. The margin width is maximized so that the closest points (support vectors) are as far from the center line as possible, giving strong generalization.",
+    "mathematical_formula": "\\min_{\\mathbf{w}, b, \\boldsymbol{\\xi}} \\frac{1}{2} \\|\\mathbf{w}\\|^2 + C \\sum_{i=1}^n \\xi_i \\quad \\text{s.t.} \\quad y_i(\\mathbf{w}^T \\phi(\\mathbf{x}_i) + b) \\ge 1 - \\xi_i",
+    "step_by_step_working": [
+      "Standardize all feature coordinates to unit scale (essential for SVM).",
+      "Formulate the convex quadratic optimization problem.",
+      "Identify the critical support vectors along the margin boundaries.",
+      "Solve for dual Lagrange multipliers alpha_i.",
+      "Classify new query points using sign(w^T * phi(x) + b)."
+    ],
+    "parameters": [
+      {
+        "name": "C",
+        "type": "float",
+        "default": 1.0,
+        "description": "Regularization parameter. Strength of margin penalty; smaller C allows wider margins with more margin violations.",
+        "allowed_range": "[0.01, 100.0]"
+      },
+      {
+        "name": "kernel",
+        "type": "str",
+        "default": "rbf",
+        "description": "Specifies the kernel type to be used in the algorithm.",
+        "options": ["rbf", "linear", "poly", "sigmoid"]
+      }
+    ],
+    "advantages": [
+      "Effective in high-dimensional spaces, even where feature count exceeds sample count ($p > n$).",
+      "Memory efficient because decision function uses only a small subset of training points (support vectors).",
+      "RBF kernel models complex non-linear boundaries gracefully."
+    ],
+    "limitations": [
+      "Training scales quadratically with sample size ($O(n^2)$ to $O(n^3)$); slow on datasets > 50,000 rows.",
+      "Sensitive to feature scaling."
+    ],
+    "use_cases": [
+      "Bioinformatics and microarray gene classification.",
+      "Image and facial expression classification."
+    ],
+    "when_to_use": [
+      "When dataset has high dimensions and clean margins.",
+      "When training dataset has fewer than 20,000 rows."
+    ],
+    "when_to_avoid": [
+      "On very large datasets (>50,000 samples) where training becomes prohibitively slow."
+    ],
+    "python_snippet": "from sklearn.svm import SVC\nmodel = SVC(C=1.0, kernel='rbf', random_state=42)\nmodel.fit(X_train_scaled, y_train)\ny_pred = model.predict(X_test_scaled)",
+    "code_explanation": "Trains a support vector classifier with an RBF kernel. Input data must be standardized.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "C": 1.0,
+      "kernel": "rbf"
+    }
+  },
+  {
+    "id": "gradient_boosting_classifier",
+    "name": "Gradient Boosting Classifier",
+    "category": "classification",
+    "task_type": "classification",
+    "short_description": "Sequentially builds an ensemble of shallow decision trees that minimize cross-entropy loss via gradient descent.",
+    "intuition": "Builds a sequence of trees where each new tree is trained specifically to correct the classification errors and probability gaps made by all earlier trees.",
+    "mathematical_formula": "F_m(\\mathbf{x}) = F_{m-1}(\\mathbf{x}) + \\eta \\cdot h_m(\\mathbf{x})",
+    "step_by_step_working": [
+      "Initialize model with log-odds of positive class.",
+      "Calculate negative gradient pseudo-residuals (difference between true label and predicted probability).",
+      "Train a shallow decision tree to fit the pseudo-residuals.",
+      "Update ensemble log-odds predictions scaled by learning rate eta.",
+      "Repeat for n_estimators iterations.",
+      "Pass final accumulated log-odds through sigmoid to produce probabilities."
+    ],
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "int",
+        "default": 100,
+        "description": "The number of boosting stages to perform.",
+        "allowed_range": "[10, 500]"
+      },
+      {
+        "name": "learning_rate",
+        "type": "float",
+        "default": 0.1,
+        "description": "Learning rate shrinks the contribution of each tree.",
+        "allowed_range": "[0.01, 1.0]"
+      },
+      {
+        "name": "max_depth",
+        "type": "int",
+        "default": 3,
+        "description": "Maximum depth of the individual regression estimators.",
+        "allowed_range": "[1, 10]"
+      }
+    ],
+    "advantages": [
+      "Industry-leading classification accuracy on tabular datasets.",
+      "Optimizes directly for classification metrics and subtle edge cases.",
+      "Built-in feature importance evaluation."
+    ],
+    "limitations": [
+      "Sequential training makes it slower than parallel Random Forests.",
+      "Requires careful tuning of learning rate and tree depth to prevent overfitting."
+    ],
+    "use_cases": [
+      "Search ranking and ad click prediction.",
+      "Credit risk scoring and churn prevention."
+    ],
+    "when_to_use": [
+      "When predictive accuracy is the top metric of success.",
+      "When feature interactions are intricate."
+    ],
+    "when_to_avoid": [
+      "When training compute time is strictly limited.",
+      "When data has massive noise and mislabeled targets."
+    ],
+    "python_snippet": "from sklearn.ensemble import GradientBoostingClassifier\nmodel = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)",
+    "code_explanation": "Fits a sequence of 100 boosted trees with learning_rate=0.1, optimizing cross-entropy loss.",
+    "curriculum_status": "in-syllabus",
+    "learning_content_status": "available",
+    "training_supported": true,
+    "default_hyperparameters": {
+      "n_estimators": 100,
+      "learning_rate": 0.1,
+      "max_depth": 3
+    }
+  }
+]

@@ -1,0 +1,137 @@
+[
+  {
+    "id": "lesson-u4-l1",
+    "unit": "Unit 4",
+    "module": "Unsupervised Learning & Clustering",
+    "title": "K-Means Clustering and the Elbow Method",
+    "order": 1,
+    "level": "intermediate",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand partitioning clustering and the iterative Expectation-Maximization procedure.",
+      "Calculate cluster inertia (Within-Cluster Sum of Squares).",
+      "Use the Elbow Method and Silhouette Score to choose the optimal number of clusters K."
+    ],
+    "explanation": "K-Means is a centroid-based clustering algorithm that partitions an unlabelled dataset into $K$ non-overlapping clusters. It alternates between two steps until convergence: assignment (each data point is assigned to its closest cluster centroid) and update (each centroid is recalculated as the arithmetic mean of all points assigned to it).",
+    "definitions": [
+      {
+        "term": "Inertia (WCSS)",
+        "definition": "Within-Cluster Sum of Squares: the sum of squared Euclidean distances of samples to their closest cluster center."
+      },
+      {
+        "term": "Silhouette Score",
+        "definition": "A metric between -1 and +1 measuring how similar an object is to its own cluster compared to neighboring clusters."
+      },
+      {
+        "term": "Centroid",
+        "definition": "The geometric center or mean coordinates of all data points belonging to a cluster."
+      }
+    ],
+    "mathematical_explanation": "Objective: $\\min_{\\mathbf{S}} \\sum_{k=1}^K \\sum_{\\mathbf{x} \\in S_k} \\|\\mathbf{x} - \\boldsymbol{\\mu}_k\\|^2$. In step 1: $S_k^{(t)} = \\{\\mathbf{x}_i : \\|\\mathbf{x}_i - \\boldsymbol{\\mu}_k^{(t)}\\|^2 \\le \\|\\mathbf{x}_i - \\boldsymbol{\\mu}_j^{(t)}\\|^2 \\forall j\\}$. In step 2: $\\boldsymbol{\\mu}_k^{(t+1)} = \\frac{1}{|S_k^{(t)}|} \\sum_{\\mathbf{x}_i \\in S_k^{(t)}} \\mathbf{x}_i$.",
+    "real_world_example": "Customer segmentation: An airline grouping frequent flyers into corporate travelers, budget vacationers, and seasonal fliers based on flight frequency and spend.",
+    "step_by_step_working": [
+      "Normalize/standardize features to ensure fair Euclidean distance computation.",
+      "Choose the number of clusters $K$ and initialize centroids (e.g. k-means++ initialization).",
+      "Assign each data point to the closest centroid.",
+      "Recalculate centroids as the mean of points in each cluster.",
+      "Repeat until centroid coordinates stop changing (or tolerance threshold is reached).",
+      "Plot inertia across different values of $K$ to locate the 'elbow'."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.datasets import make_blobs\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\nfrom sklearn.metrics import silhouette_score\n\n# Generate synthetic clusters\nX, _ = make_blobs(n_samples=300, centers=4, cluster_std=0.60, random_state=42)\nX_scaled = StandardScaler().fit_transform(X)\n\nkmeans = KMeans(n_clusters=4, init='k-means++', n_init=10, random_state=42)\ncluster_labels = kmeans.fit_predict(X_scaled)\n\nprint(f'WCSS Inertia: {kmeans.inertia_:.2f}')\nprint(f'Silhouette Score: {silhouette_score(X_scaled, cluster_labels):.3f}')\nprint('Cluster Centroids:\\n', kmeans.cluster_centers_)",
+    "code_explanation": "KMeans groups the points into 4 clusters. We calculate the Silhouette Score, where values close to 1.0 indicate tight, well-separated clusters. The centroids represent the average coordinates of each persona.",
+    "advantages": [
+      "Scales easily to large datasets with linear time complexity $O(n \\cdot K \\cdot d \\cdot i)$.",
+      "Simple to implement, interpret, and explain to non-technical stakeholders."
+    ],
+    "limitations": [
+      "Requires specifying the number of clusters $K$ in advance.",
+      "Assumes spherical, equally sized clusters; fails on complex non-convex shapes or varying densities."
+    ],
+    "common_mistakes": [
+      "Using K-Means without standardizing features first.",
+      "Assuming the lowest inertia always means the best model (inertia always decreases as $K$ increases, reaching 0 when $K=n$)."
+    ],
+    "related_concepts": ["supervised-unsupervised", "encoding-scaling", "dataset-features-target"],
+    "knowledge_check": [
+      {
+        "id": "q-km-1",
+        "question": "Why can we not choose K simply by finding where Inertia is minimized?",
+        "options": [
+          {"id": "a", "text": "Inertia cannot be computed mathematically"},
+          {"id": "b", "text": "Inertia decreases monotonically with K, reaching zero when every point is its own cluster (K=N)"},
+          {"id": "c", "text": "Inertia is only used for classification"},
+          {"id": "d", "text": "Scikit-learn forbids minimizing inertia"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "Inertia strictly drops as more clusters are added. We look for the 'elbow' where the marginal decrease flattens out, or use the silhouette score."
+      }
+    ]
+  },
+  {
+    "id": "lesson-u4-l2",
+    "unit": "Unit 4",
+    "module": "Unsupervised Learning & Clustering",
+    "title": "Principal Component Analysis (PCA)",
+    "order": 2,
+    "level": "intermediate",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand the curse of dimensionality and the need for dimensionality reduction.",
+      "Calculate variance explained by principal components using eigenvectors and eigenvalues.",
+      "Project high-dimensional datasets into 2D/3D spaces for visualization."
+    ],
+    "explanation": "Principal Component Analysis is an unsupervised linear dimensionality reduction technique. When working with dozens or hundreds of features, many are redundant or collinear. PCA finds orthogonal axes (principal components) along which the variance of the data is maximized, allowing us to capture 80-95% of information in just a few composite dimensions.",
+    "definitions": [
+      {
+        "term": "Principal Component",
+        "definition": "A normalized linear combination of the original features that captures the maximum possible variance and is orthogonal to preceding components."
+      },
+      {
+        "term": "Eigenvalue",
+        "definition": "A scalar indicating the amount of variance captured along the direction of the corresponding eigenvector."
+      },
+      {
+        "term": "Explained Variance Ratio",
+        "definition": "The percentage of total dataset variance accounted for by each individual principal component."
+      }
+    ],
+    "mathematical_explanation": "Given centered data matrix $\\mathbf{X}$, compute sample covariance matrix $\\mathbf{\\Sigma} = \\frac{1}{n-1}\\mathbf{X}^T \\mathbf{X}$. Perform eigendecomposition: $\\mathbf{\\Sigma}\\mathbf{v} = \\lambda \\mathbf{v}$. The first principal component $\\mathbf{v}_1$ corresponds to the largest eigenvalue $\\lambda_1$.",
+    "real_world_example": "Compressing a 100-feature financial risk profile dataset down to 3 principal components to visualize risk clusters on a 3D interactive dashboard.",
+    "step_by_step_working": [
+      "Standardize data to zero mean and unit variance (critical for PCA).",
+      "Compute the covariance matrix of the standardized features.",
+      "Calculate eigenvectors and eigenvalues of the covariance matrix.",
+      "Sort eigenvalues in descending order and select top $k$ components.",
+      "Project the original dataset into the new $k$-dimensional subspace: $\\mathbf{Z} = \\mathbf{X}\\mathbf{W}_k$."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\ncancer = load_breast_cancer()\nX = cancer.data  # 30 original features\n\n# 1. Standardize features\nX_scaled = StandardScaler().fit_transform(X)\n\n# 2. Fit PCA retaining 2 principal components for visualization\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X_scaled)\n\nprint(f'Original shape: {X.shape}')\nprint(f'Reduced shape: {X_pca.shape}')\nprint(f'Explained variance ratio: {pca.explained_variance_ratio_}')\nprint(f'Total variance explained: {np.sum(pca.explained_variance_ratio_)*100:.1f}%')",
+    "code_explanation": "PCA reduces the 30-dimensional breast cancer dataset to 2 composite axes while retaining over 63% of the total variance, making it possible to plot and inspect tumor clusters in a standard 2D scatter plot.",
+    "advantages": [
+      "Reduces computational complexity and storage requirements for downstream models.",
+      "Removes multicollinearity by generating completely orthogonal (uncorrelated) features."
+    ],
+    "limitations": [
+      "Transformed principal components lose direct human interpretability (they are linear combinations of features).",
+      "Captures only linear relationships; non-linear manifolds require t-SNE or UMAP."
+    ],
+    "common_mistakes": [
+      "Running PCA without standardizing features first; unscaled features with large numerical ranges will artificially dominate components.",
+      "Fitting PCA on test data instead of learning component directions from training data only."
+    ],
+    "related_concepts": ["encoding-scaling", "overfitting-underfitting", "dataset-features-target"],
+    "knowledge_check": [
+      {
+        "id": "q-pca-1",
+        "question": "What must you always do before applying PCA?",
+        "options": [
+          {"id": "a", "text": "Encode the target column with One-Hot Encoding"},
+          {"id": "b", "text": "Standardize features to zero mean and unit variance"},
+          {"id": "c", "text": "Convert the task to classification"},
+          {"id": "d", "text": "Set the random state to 0"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "Because PCA seeks directions of maximum variance, variables measured on large scales would dominate the components unless all features are standardized to unit variance."
+      }
+    ]
+  }
+]

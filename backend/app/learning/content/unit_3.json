@@ -1,0 +1,203 @@
+[
+  {
+    "id": "lesson-u3-l1",
+    "unit": "Unit 3",
+    "module": "Supervised Learning - Classification",
+    "title": "Logistic Regression and Decision Boundaries",
+    "order": 1,
+    "level": "beginner",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand why Linear Regression is inappropriate for probability and discrete classification.",
+      "Derive the Sigmoid function and odds ratio formulation.",
+      "Interpret log-loss (binary cross-entropy) and classification decision thresholds."
+    ],
+    "explanation": "Despite its name, Logistic Regression is a classification algorithm. While linear regression can output any number from $-\\infty$ to $+\\infty$, probabilities must lie strictly between 0 and 1. Logistic Regression passes a linear combination of inputs through the non-linear Sigmoid (logistic) function, transforming linear scores into calibrated probability estimates $P(y=1|\\mathbf{x})$.",
+    "definitions": [
+      {
+        "term": "Sigmoid Function",
+        "definition": "An S-shaped mathematical activation curve $\\sigma(z) = \\frac{1}{1 + e^{-z}}$ mapping real numbers into the range $(0, 1)$."
+      },
+      {
+        "term": "Odds Ratio",
+        "definition": "The ratio of probability of success to probability of failure: $\\frac{p}{1-p}$."
+      },
+      {
+        "term": "Log-Loss (Binary Cross-Entropy)",
+        "definition": "The standard convex loss function for binary classification that heavily penalizes confident wrong predictions."
+      }
+    ],
+    "mathematical_explanation": "Model: $P(y=1|\\mathbf{x}) = \\sigma(\\mathbf{w}^T \\mathbf{x} + b) = \\frac{1}{1 + e^{-(\\mathbf{w}^T \\mathbf{x} + b)}}$. Binary cross-entropy loss: $\\mathcal{L} = -\\frac{1}{n} \\sum_{i=1}^n [y_i \\ln(\\hat{p}_i) + (1-y_i) \\ln(1-\\hat{p}_i)]$. The decision boundary is the hyperplane where $\\mathbf{w}^T \\mathbf{x} + b = 0$, giving $\\hat{p} = 0.5$.",
+    "real_world_example": "Credit scoring: Predicting whether a borrower will repay a loan ($y=1$) or default ($y=0$) within 12 months.",
+    "step_by_step_working": [
+      "Compute linear score $z = \\mathbf{w}^T \\mathbf{x} + b$.",
+      "Pass $z$ through sigmoid activation to get predicted probability $\\hat{p}$.",
+      "Compute gradient of cross-entropy loss with respect to weights $\\mathbf{w}$.",
+      "Update weights iteratively using gradient descent or L-BFGS optimizer.",
+      "Apply decision threshold (default 0.5) to convert predicted probability into final class 0 or 1."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.datasets import make_classification\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, classification_report, confusion_matrix\n\n# Generate binary classification problem\nX, y = make_classification(n_samples=200, n_features=4, n_classes=2, random_state=42)\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)\n\nmodel = LogisticRegression(random_state=42)\nmodel.fit(X_train, y_train)\n\ny_pred = model.predict(X_test)\ny_probs = model.predict_proba(X_test)[:, 1]\n\nprint(f'Accuracy: {accuracy_score(y_test, y_pred):.2f}')\nprint('Confusion Matrix:\\n', confusion_matrix(y_test, y_pred))\nprint('Classification Report:\\n', classification_report(y_test, y_pred))",
+    "code_explanation": "LogisticRegression fits optimal coefficients to separate classes. Notice we can inspect both discrete predictions (.predict) and continuous probability confidences (.predict_proba).",
+    "advantages": [
+      "Outputs calibrated probabilities, not just binary classifications.",
+      "Highly interpretable and serves as an industry-standard baseline for classification."
+    ],
+    "limitations": [
+      "Finds only linear decision boundaries unless non-linear feature engineering is applied.",
+      "Struggles when feature relationships are heavily non-linear or deeply hierarchical."
+    ],
+    "common_mistakes": [
+      "Assuming a default threshold of 0.5 is always optimal; on imbalanced fraud data, lowering threshold to 0.2 catches far more fraud cases.",
+      "Confusing logistic regression with linear regression."
+    ],
+    "related_concepts": ["regression-classification", "evaluation-metrics", "overfitting-underfitting"],
+    "knowledge_check": [
+      {
+        "id": "q-clf-1",
+        "question": "What is the range of output values produced by the Sigmoid function?",
+        "options": [
+          {"id": "a", "text": "[-1, 1]"},
+          {"id": "b", "text": "[0, 1]"},
+          {"id": "c", "text": "[-infinity, +infinity]"},
+          {"id": "d", "text": "[0, 100]"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "The Sigmoid function maps any real number input into open interval (0, 1), representing valid probability."
+      }
+    ]
+  },
+  {
+    "id": "lesson-u3-l2",
+    "unit": "Unit 3",
+    "module": "Supervised Learning - Classification",
+    "title": "K-Nearest Neighbors (KNN)",
+    "order": 2,
+    "level": "beginner",
+    "estimated_minutes": 20,
+    "learning_objectives": [
+      "Understand instance-based, non-parametric 'lazy' learning.",
+      "Compute Euclidean, Manhattan, and Minkowski distance metrics.",
+      "Analyze the effect of the hyperparameter K on the bias-variance tradeoff."
+    ],
+    "explanation": "K-Nearest Neighbors is an intuitive algorithm based on the principle that similar things exist in close proximity. Unlike eager learners that construct mathematical formulas during training, KNN simply memorizes the training data. When a new query point arrives, it calculates the distance to all stored points, finds the K closest neighbors, and takes a majority vote for classification (or average for regression).",
+    "definitions": [
+      {
+        "term": "Instance-based Learning",
+        "definition": "Learning algorithms that delay generalization until a query is made, comparing new instances directly with stored training instances."
+      },
+      {
+        "term": "Euclidean Distance",
+        "definition": "The straight-line distance between two points in Euclidean space: $d(\\mathbf{p}, \\mathbf{q}) = \\sqrt{\\sum_{i=1}^n (p_i - q_i)^2}$."
+      },
+      {
+        "term": "Curse of Dimensionality",
+        "definition": "The phenomenon where data becomes sparse and Euclidean distance loses discriminatory power as the number of feature dimensions grows."
+      }
+    ],
+    "mathematical_explanation": "For query $\\mathbf{x}_q$, find index set $\\mathcal{N}_K(\\mathbf{x}_q)$ of $K$ points minimizing distance $d(\\mathbf{x}_i, \\mathbf{x}_q)$. Predicted class: $\\hat{y} = \\arg\\max_c \\sum_{i \\in \\mathcal{N}_K} \\mathbb{I}(y_i = c)$. Setting $K=1$ yields zero training error but extreme variance; large $K$ increases bias.",
+    "real_world_example": "Recommender systems: Recommending movies to a user by finding the 5 users whose historical movie ratings are closest in distance.",
+    "step_by_step_working": [
+      "Standardize all numeric features so columns with larger magnitudes do not dominate distances.",
+      "Choose the hyperparameter $K$ (often an odd integer to avoid ties).",
+      "Compute distances between the new test point and all training samples.",
+      "Sort samples by distance in ascending order and select the top $K$ neighbors.",
+      "Assign the most frequent class among those $K$ neighbors as the prediction."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import accuracy_score\n\niris = load_iris()\nX, y = iris.data, iris.target\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)\n\n# Scaling is MANDATORY for distance-based KNN\npipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsClassifier(n_neighbors=5, metric='minkowski', p=2))\n])\n\npipeline.fit(X_train, y_train)\ny_pred = pipeline.predict(X_test)\nprint(f'KNN Test Accuracy: {accuracy_score(y_test, y_pred):.2f}')",
+    "code_explanation": "Because KNN measures geometric distance, scaling with StandardScaler is strictly necessary. We train a 5-neighbor classifier on the Iris dataset, achieving excellent classification accuracy.",
+    "advantages": [
+      "Completely intuitive, non-parametric, and naturally supports multi-class classification.",
+      "No formal mathematical assumptions about underlying data distribution."
+    ],
+    "limitations": [
+      "Inference is slow on large datasets because every query requires calculating distances to every training sample.",
+      "Extremely sensitive to unscaled features and the curse of dimensionality."
+    ],
+    "common_mistakes": [
+      "Forgetting to scale features before running KNN.",
+      "Choosing an even number of neighbors $K$ in binary classification, which causes voting ties."
+    ],
+    "related_concepts": ["encoding-scaling", "overfitting-underfitting", "parameters-hyperparameters"],
+    "knowledge_check": [
+      {
+        "id": "q-knn-1",
+        "question": "What happens to the model behavior if you set K=1 in KNN?",
+        "options": [
+          {"id": "a", "text": "It underfits heavily with high bias"},
+          {"id": "b", "text": "It overfits with high variance, memorizing noise and outlier points"},
+          {"id": "c", "text": "It computes the average of all training points"},
+          {"id": "d", "text": "It runs 100 times slower"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "With K=1, the model creates jagged decision boundaries around every single individual training sample, leading to high variance (overfitting)."
+      }
+    ]
+  },
+  {
+    "id": "lesson-u3-l3",
+    "unit": "Unit 3",
+    "module": "Supervised Learning - Classification",
+    "title": "Decision Trees and Random Forests",
+    "order": 3,
+    "level": "intermediate",
+    "estimated_minutes": 30,
+    "learning_objectives": [
+      "Understand recursive binary splitting, Gini Impurity, and Information Gain.",
+      "Prevent decision tree overfitting through hyperparameter pruning (max_depth, min_samples_split).",
+      "Master Ensemble Bagging and Random Forests to reduce variance."
+    ],
+    "explanation": "A Decision Tree breaks down complex decisions by asking a hierarchy of simple if/else questions based on feature thresholds. At each node, it selects the feature split that maximizes impurity reduction. While a single decision tree easily overfits, Random Forests combine dozens or hundreds of de-correlated decision trees trained on bootstrap samples with random feature subsets. Their averaged vote dramatically lowers prediction variance while retaining high accuracy.",
+    "definitions": [
+      {
+        "term": "Gini Impurity",
+        "definition": "A measure of node purity between 0 (pure, all samples same class) and 0.5 (equally mixed binary classes): $I_G = 1 - \\sum p_k^2$."
+      },
+      {
+        "term": "Bootstrap Aggregating (Bagging)",
+        "definition": "Training multiple diverse models on random subsets of training data sampled with replacement, then aggregating predictions."
+      },
+      {
+        "term": "Feature Importance",
+        "definition": "The total reduction in node impurity brought about by a feature across all trees in an ensemble."
+      }
+    ],
+    "mathematical_explanation": "Information Gain for split $S$ on node $T$: $\\Delta I = I(T) - \\frac{N_L}{N} I(T_L) - \\frac{N_R}{N} I(T_R)$. Random Forests build $B$ trees; classification prediction is majority vote: $\\hat{y} = \\text{mode}\\{T_1(\\mathbf{x}), T_2(\\mathbf{x}), \\dots, T_B(\\mathbf{x})\\}$.",
+    "real_world_example": "Loan approval: A decision tree checks 'Credit Score > 650?' -> 'Annual Income > \\$50,000?' -> 'Debt-to-Income < 0.4?' to approve or decline loans transparently.",
+    "step_by_step_working": [
+      "Evaluate all candidate feature thresholds to find the split minimizing weighted child impurity.",
+      "Split node samples into left and right branches.",
+      "Repeat recursively until stopping criteria (max_depth, min_samples_leaf) are satisfied.",
+      "For Random Forests: generate $B$ bootstrap samples, randomly select $\\sqrt{p}$ features at each split, and build $B$ unpruned trees.",
+      "Aggregate individual tree votes to determine final ensemble prediction."
+    ],
+    "python_code": "from sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\nwine = load_wine()\nX_train, X_test, y_train, y_test = train_test_split(wine.data, wine.target, test_size=0.3, random_state=42)\n\n# Single Decision Tree\ndt = DecisionTreeClassifier(max_depth=3, random_state=42)\ndt.fit(X_train, y_train)\nprint(f'Decision Tree Accuracy: {accuracy_score(y_test, dt.predict(X_test)):.2f}')\n\n# Random Forest Ensemble\nrf = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)\nrf.fit(X_train, y_train)\nprint(f'Random Forest Accuracy: {accuracy_score(y_test, rf.predict(X_test)):.2f}')\nprint(f'Top feature importance: {wine.feature_names[rf.feature_importances_.argmax()]}')",
+    "code_explanation": "A single shallow decision tree is fast and visualizable. The Random Forest ensemble combines 100 trees, improving generalization accuracy and providing robust feature importance scores.",
+    "advantages": [
+      "Natural handling of mixed data types (numeric + categorical) without requiring normalization.",
+      "Random Forests provide excellent out-of-the-box accuracy with low susceptibility to overfitting."
+    ],
+    "limitations": [
+      "Single unpruned decision trees overfit severely.",
+      "Random Forests are harder to visualize and slower to train than linear models."
+    ],
+    "common_mistakes": [
+      "Letting decision trees grow to infinite depth without setting max_depth or min_samples_split.",
+      "Assuming tree models require feature scaling; trees are invariant to monotonic transformations."
+    ],
+    "related_concepts": ["overfitting-underfitting", "parameters-hyperparameters", "model-selection"],
+    "knowledge_check": [
+      {
+        "id": "q-dt-1",
+        "question": "Why does a Random Forest have lower variance than an individual Decision Tree?",
+        "options": [
+          {"id": "a", "text": "It uses a higher learning rate"},
+          {"id": "b", "text": "It averages predictions from multiple de-correlated trees trained on bootstrap samples"},
+          {"id": "c", "text": "It converts all problems into linear equations"},
+          {"id": "d", "text": "It eliminates the need for test data"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "Averaging predictions from many de-correlated trees cancels out individual errors, reducing overall model variance."
+      }
+    ]
+  }
+]

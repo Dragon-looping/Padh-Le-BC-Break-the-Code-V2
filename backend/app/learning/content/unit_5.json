@@ -1,0 +1,136 @@
+[
+  {
+    "id": "lesson-u5-l1",
+    "unit": "Unit 5",
+    "module": "Model Evaluation & Validation",
+    "title": "Comprehensive Classification Metrics and Confusion Matrix",
+    "order": 1,
+    "level": "intermediate",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Deconstruct a Confusion Matrix into TP, FP, TN, and FN.",
+      "Calculate Precision, Recall, and the harmonic F1 score.",
+      "Choose the right metric for imbalanced classification scenarios."
+    ],
+    "explanation": "Evaluating classification models with simple accuracy is dangerous when class distributions are imbalanced. The Confusion Matrix is the foundational diagnostic tool that tabulates predicted outcomes against actual ground truth. From this table, we derive Precision (how trustworthy positive predictions are) and Recall (what percentage of actual positives were successfully detected). The F1 score harmonizes both into a single metric.",
+    "definitions": [
+      {
+        "term": "Precision",
+        "definition": "The proportion of predicted positives that were truly positive: $\\frac{TP}{TP + FP}$."
+      },
+      {
+        "term": "Recall (Sensitivity)",
+        "definition": "The proportion of actual positive cases successfully identified by the model: $\\frac{TP}{TP + FN}$."
+      },
+      {
+        "term": "F1 Score",
+        "definition": "The harmonic mean of Precision and Recall: $2 \\cdot \\frac{\\text{Precision} \\cdot \\text{Recall}}{\\text{Precision} + \\text{Recall}}$."
+      }
+    ],
+    "mathematical_explanation": "Confusion Matrix breakdown: $TP$ (True Positive), $FP$ (False Positive / Type I error), $TN$ (True Negative), $FN$ (False Negative / Type II error). Accuracy = $\\frac{TP + TN}{TP + TN + FP + FN}$. The harmonic mean penalizes extreme imbalances between precision and recall much more heavily than the arithmetic mean.",
+    "real_world_example": "In disease screening, missing an infected patient ($FN$) is catastrophic, so we prioritize high Recall. In spam filtering, sending an urgent business email to junk ($FP$) is disruptive, so we prioritize high Precision.",
+    "step_by_step_working": [
+      "Generate test predictions using model.predict(X_test).",
+      "Compute confusion matrix to inspect TP, FP, TN, FN.",
+      "Calculate Precision, Recall, and F1 score.",
+      "For multi-class targets, compute macro-average (unweighted class average) and weighted-average (class-size weighted).",
+      "Inspect the full scikit-learn classification_report."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, classification_report\n\n# Ground truth vs model predictions (imbalanced binary problem)\ny_true = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1])\ny_pred = np.array([0, 0, 0, 0, 1, 0, 0, 1, 1, 0])\n\ncm = confusion_matrix(y_true, y_pred)\nprec = precision_score(y_true, y_pred)\nrec = recall_score(y_true, y_pred)\nf1 = f1_score(y_true, y_pred)\n\nprint('Confusion Matrix (rows=actual, cols=predicted):\\n', cm)\nprint(f'Precision: {prec:.2f}')\nprint(f'Recall:    {rec:.2f}')\nprint(f'F1 Score:  {f1:.2f}')\nprint('\\nFull Report:\\n', classification_report(y_true, y_pred))",
+    "code_explanation": "Notice that although raw accuracy is 80% (8/10), the model missed one positive (Recall = 67%) and flagged one false alarm (Precision = 67%), yielding an F1 score of 0.67. The classification report breaks this down for both classes.",
+    "advantages": [
+      "Provides transparent insight into error distribution and trade-offs.",
+      "Prevents false confidence on imbalanced datasets."
+    ],
+    "limitations": [
+      "Threshold-dependent: metrics shift if the probability threshold moves from 0.5."
+    ],
+    "common_mistakes": [
+      "Using accuracy to brag about model quality when the majority class accounts for 99% of samples.",
+      "Not distinguishing between Type I (false alarm) and Type II (missed target) costs in business decisions."
+    ],
+    "related_concepts": ["evaluation-metrics", "regression-classification", "model-selection"],
+    "knowledge_check": [
+      {
+        "id": "q-eval-1",
+        "question": "If a medical diagnostic model predicts that a patient is healthy when they actually have a disease, which error occurred?",
+        "options": [
+          {"id": "a", "text": "True Negative"},
+          {"id": "b", "text": "False Positive (Type I error)"},
+          {"id": "c", "text": "False Negative (Type II error)"},
+          {"id": "d", "text": "Overfitting"}
+        ],
+        "correct_option_id": "c",
+        "explanation": "A False Negative occurs when the model predicts negative (healthy) for an actual positive (diseased) case."
+      }
+    ]
+  },
+  {
+    "id": "lesson-u5-l2",
+    "unit": "Unit 5",
+    "module": "Model Evaluation & Validation",
+    "title": "Hyperparameter Tuning with Cross-Validation",
+    "order": 2,
+    "level": "intermediate",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand the purpose of hyperparameter tuning to optimize model generalization.",
+      "Implement exhaustive Grid Search and randomized parameter exploration.",
+      "Evaluate before and after performance to determine if improvements are statistically meaningful."
+    ],
+    "explanation": "Hyperparameters govern the structural complexity and learning behavior of machine learning models (e.g. tree depth, regularization penalty alpha, number of neighbors $K$). Hyperparameter tuning systematically searches the parameter space. By evaluating each candidate parameter set across $K$-fold cross-validation folds on the training data, we select configurations that maximize validation performance without overfitting the test set.",
+    "definitions": [
+      {
+        "term": "GridSearchCV",
+        "definition": "An exhaustive search over specified parameter values for an estimator, evaluating all combinations via cross-validation."
+      },
+      {
+        "term": "Cross-Validation Score",
+        "definition": "The average performance metric calculated across all validation folds during tuning."
+      },
+      {
+        "term": "Generalization Gap",
+        "definition": "The difference between training performance and test/validation performance, indicating variance and overfitting risk."
+      }
+    ],
+    "mathematical_explanation": "For parameter configuration $\\boldsymbol{\\theta} \\in \\Theta$, the cross-validation score is: $\\text{CV}(\\boldsymbol{\\theta}) = \\frac{1}{K} \\sum_{k=1}^K \\mathcal{M}(f(\\mathbf{X}_{-k}; \\boldsymbol{\\theta}), \\mathbf{X}_k, \\mathbf{y}_k)$. Select $\\boldsymbol{\\theta}^* = \\arg\\max_{\\boldsymbol{\\theta}} \\text{CV}(\\boldsymbol{\\theta})$.",
+    "real_world_example": "Tuning a Random Forest for fraud detection: testing max_depth in [5, 10, 15] and n_estimators in [50, 100, 200] to find the sweet spot that maximizes F1 score.",
+    "step_by_step_working": [
+      "Define the candidate parameter grid with sensible lower and upper bounds.",
+      "Wrap the estimator or pipeline inside GridSearchCV with specified CV folds and scoring metric.",
+      "Fit GridSearchCV on training data only.",
+      "Retrieve best_params_ and inspect the best_score_.",
+      "Evaluate the optimized model on the held-out test set.",
+      "Compare before-tuning vs after-tuning test metrics to verify that the gain is genuine and meaningful."
+    ],
+    "python_code": "from sklearn.datasets import load_digits\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\ndigits = load_digits()\nX_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.25, random_state=42)\n\n# 1. Baseline default model\nbase_rf = RandomForestClassifier(random_state=42)\nbase_rf.fit(X_train, y_train)\nbase_acc = accuracy_score(y_test, base_rf.predict(X_test))\n\n# 2. Hyperparameter grid search\nparam_grid = {\n    'n_estimators': [20, 50, 100],\n    'max_depth': [3, 5, 10, None]\n}\n\ngrid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=3, scoring='accuracy', n_jobs=-1)\ngrid_search.fit(X_train, y_train)\n\ntuned_rf = grid_search.best_estimator_\ntuned_acc = accuracy_score(y_test, tuned_rf.predict(X_test))\n\nprint(f'Baseline Test Accuracy: {base_acc:.4f}')\nprint(f'Best Parameters: {grid_search.best_params_}')\nprint(f'Tuned Test Accuracy:    {tuned_acc:.4f}')\nprint(f'Improvement:            {tuned_acc - base_acc:+.4f}')",
+    "code_explanation": "GridSearchCV evaluates all 12 combinations across 3 folds (36 fits total). The best parameter combination is selected based on cross-validation and tested on unseen holdout data, proving genuine before-and-after improvement.",
+    "advantages": [
+      "Systematic and reproducible optimization without manual guesswork.",
+      "Guarantees finding the best configuration within the defined grid."
+    ],
+    "limitations": [
+      "Can be computationally expensive as the parameter grid grows exponentially (combinatorial explosion).",
+      "Requires careful selection of parameter bounds."
+    ],
+    "common_mistakes": [
+      "Evaluating hyperparameter search directly on test data (causes data leakage).",
+      "Searching unnecessarily huge parameter grids when randomized search or Bayesian optimization is faster."
+    ],
+    "related_concepts": ["parameters-hyperparameters", "cross-validation", "overfitting-underfitting"],
+    "knowledge_check": [
+      {
+        "id": "q-tune-1",
+        "question": "Why should hyperparameter tuning be performed using cross-validation on the training set rather than the final test set?",
+        "options": [
+          {"id": "a", "text": "Because Python throws an exception otherwise"},
+          {"id": "b", "text": "To prevent information leakage from the test set, keeping the test set as an honest evaluation of real-world generalization"},
+          {"id": "c", "text": "Because cross-validation is only allowed on small datasets"},
+          {"id": "d", "text": "To artificially inflate the training accuracy to 100%"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "If you tune hyperparameters on the test set, you overfit the test set, destroying its ability to measure true out-of-sample generalization."
+      }
+    ]
+  }
+]

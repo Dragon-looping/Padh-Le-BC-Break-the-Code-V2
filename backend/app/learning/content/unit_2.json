@@ -1,0 +1,136 @@
+[
+  {
+    "id": "lesson-u2-l1",
+    "unit": "Unit 2",
+    "module": "Supervised Learning - Regression",
+    "title": "Linear Regression and Ordinary Least Squares",
+    "order": 1,
+    "level": "beginner",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand the intuition and formulation of Simple and Multiple Linear Regression.",
+      "Derive and interpret the Ordinary Least Squares (OLS) closed-form solution and gradient descent.",
+      "Evaluate regression performance using MAE, MSE, RMSE, and R²."
+    ],
+    "explanation": "Linear Regression models the relationship between dependent continuous variable $y$ and one or more independent predictor variables $\\mathbf{x}$. It assumes a linear functional form: each feature contributes additively with a specific weight (slope). The goal of Ordinary Least Squares is finding weights that minimize the sum of squared differences between observed values and predictions.",
+    "definitions": [
+      {
+        "term": "Residual",
+        "definition": "The difference between observed ground truth $y_i$ and predicted value $\\hat{y}_i$ ($e_i = y_i - \\hat{y}_i$)."
+      },
+      {
+        "term": "R² (Coefficient of Determination)",
+        "definition": "The proportion of variance in the dependent variable that is predictable from the independent variables (1.0 is perfect; 0.0 means predicting the mean)."
+      },
+      {
+        "term": "RMSE",
+        "definition": "Root Mean Squared Error, measuring standard deviation of prediction errors in the original units of the target."
+      }
+    ],
+    "mathematical_explanation": "Model equation: $\\hat{y} = \\beta_0 + \\sum_{j=1}^{p} \\beta_j x_j = \\mathbf{X}\\boldsymbol{\\beta}$. Cost function: $J(\\boldsymbol{\\beta}) = \\frac{1}{2n} \\sum_{i=1}^n (y_i - \\mathbf{x}_i^T \\boldsymbol{\\beta})^2$. OLS closed-form normal equation: $\\boldsymbol{\\beta} = (\\mathbf{X}^T \\mathbf{X})^{-1} \\mathbf{X}^T \\mathbf{y}$.",
+    "real_world_example": "Estimating used car market price based on mileage, vehicle age, engine size, and fuel efficiency.",
+    "step_by_step_working": [
+      "Center or scale features if using gradient descent or comparing relative feature coefficients.",
+      "Add intercept term (bias column of 1s).",
+      "Compute optimal coefficients $\\boldsymbol{\\beta}$ using normal equation or gradient descent.",
+      "Calculate predictions $\\hat{y} = \\mathbf{X}_{test}\\boldsymbol{\\beta}$.",
+      "Compute residuals and calculate MAE, MSE, RMSE, and R²."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score\nfrom sklearn.model_selection import train_test_split\n\n# Synthetic data: 100 samples, 2 features\nnp.random.seed(42)\nX = np.random.randn(100, 2)\n# True equation: y = 3*x0 - 2*x1 + 5 + noise\ny = 3 * X[:, 0] - 2 * X[:, 1] + 5 + np.random.randn(100) * 0.5\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)\n\nprint(f'Coefficients: {model.coef_}')\nprint(f'Intercept: {model.intercept_:.2f}')\nprint(f'MAE: {mean_absolute_error(y_test, y_pred):.3f}')\nprint(f'RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.3f}')\nprint(f'R-squared: {r2_score(y_test, y_pred):.3f}')",
+    "code_explanation": "LinearRegression fits the optimal hyperplane. We evaluate on holdout test data using MAE, RMSE (computed as the square root of MSE), and R². Notice the estimated coefficients closely recover the true underlying values (3.0 and -2.0).",
+    "advantages": [
+      "Highly interpretable: every coefficient directly explains feature impact on the target.",
+      "Computationally light and lightning fast to train and predict."
+    ],
+    "limitations": [
+      "Assumes linear relationships; fails to capture non-linear interactions without polynomial expansion.",
+      "Vulnerable to multicollinearity and extreme outliers."
+    ],
+    "common_mistakes": [
+      "Interpreting coefficient magnitude without standardizing features first.",
+      "Evaluating regression models using classification accuracy instead of R² and RMSE."
+    ],
+    "related_concepts": ["regression-classification", "evaluation-metrics", "overfitting-underfitting"],
+    "knowledge_check": [
+      {
+        "id": "q-reg-1",
+        "question": "What does an R² score of 0.85 indicate?",
+        "options": [
+          {"id": "a", "text": "The model has an 85% accuracy on classification"},
+          {"id": "b", "text": "85% of the variance in the target variable is explained by the features"},
+          {"id": "c", "text": "The model makes an error of 15 dollars on average"},
+          {"id": "d", "text": "The learning rate was set to 0.85"}
+        ],
+        "correct_option_id": "b",
+        "explanation": "R² measures the proportion of variance in the dependent variable explained by the regression model."
+      }
+    ]
+  },
+  {
+    "id": "lesson-u2-l2",
+    "unit": "Unit 2",
+    "module": "Supervised Learning - Regression",
+    "title": "Ridge, Lasso & Regularized Regression",
+    "order": 2,
+    "level": "intermediate",
+    "estimated_minutes": 25,
+    "learning_objectives": [
+      "Understand why standard OLS overfits in high dimensions or under multicollinearity.",
+      "Compare L2 Ridge penalty (shrinkage) with L1 Lasso penalty (sparse feature selection).",
+      "Tune the regularization strength parameter alpha using validation."
+    ],
+    "explanation": "When features are correlated (multicollinearity) or numerous, ordinary linear regression tends to produce huge positive and negative coefficients that cancel each other out, leading to severe overfitting. Regularization adds a penalty term to the loss function that penalizes large coefficient weights. Ridge regression adds an L2 penalty (sum of squared coefficients), shrinking weights smoothly. Lasso regression adds an L1 penalty (sum of absolute coefficients), which forces uninformative coefficients to exactly zero, acting as automatic feature selection.",
+    "definitions": [
+      {
+        "term": "Ridge Regression (L2)",
+        "definition": "Regularized linear regression penalizing the squared L2-norm of the weight vector."
+      },
+      {
+        "term": "Lasso Regression (L1)",
+        "definition": "Regularized linear regression penalizing the absolute L1-norm of the weight vector, producing sparse models."
+      },
+      {
+        "term": "Alpha ($\\alpha$)",
+        "definition": "The hyperparameter controlling penalty strength; higher alpha enforces greater shrinkage."
+      }
+    ],
+    "mathematical_explanation": "Ridge objective: $J_{Ridge}(\\boldsymbol{\\beta}) = \\text{MSE} + \\alpha \\sum_{j=1}^p \\beta_j^2$. Lasso objective: $J_{Lasso}(\\boldsymbol{\\beta}) = \\text{MSE} + \\alpha \\sum_{j=1}^p |\\beta_j|$.",
+    "real_world_example": "Genomic medicine: Predicting drug response using 20,000 gene expression features from 300 patients. Lasso eliminates 19,950 irrelevant genes, keeping only the 50 most predictive biomarkers.",
+    "step_by_step_working": [
+      "Standardize all input features (essential, because unscaled features receive uneven penalties).",
+      "Choose candidate values for alpha (e.g. 0.01, 0.1, 1.0, 10.0).",
+      "Fit Ridge or Lasso regression on training data.",
+      "Inspect coefficient shrinkage and check how many weights were zeroed out in Lasso.",
+      "Evaluate RMSE on holdout test set to confirm reduced variance."
+    ],
+    "python_code": "import numpy as np\nfrom sklearn.linear_model import Ridge, Lasso, LinearRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\n# Create collinear data\nnp.random.seed(42)\nX = np.random.randn(50, 10)\n# Make columns 1 and 2 collinear\nX[:, 1] = X[:, 0] + np.random.randn(50) * 0.01\ny = 2 * X[:, 0] + 3 * X[:, 3] + np.random.randn(50) * 0.5\n\n# Compare Ridge vs Lasso\nridge = Pipeline([('scaler', StandardScaler()), ('model', Ridge(alpha=1.0))])\nlasso = Pipeline([('scaler', StandardScaler()), ('model', Lasso(alpha=0.2))])\n\nridge.fit(X, y)\nlasso.fit(X, y)\n\nprint('Ridge coefficients:', np.round(ridge.named_steps['model'].coef_, 2))\nprint('Lasso coefficients:', np.round(lasso.named_steps['model'].coef_, 2))\nprint('Lasso zeroed-out features:', np.sum(lasso.named_steps['model'].coef_ == 0))",
+    "code_explanation": "StandardScaler ensures all features receive fair penalties regardless of unit scales. Notice that Lasso sets uninformative feature coefficients exactly to 0.0, performing automatic feature selection.",
+    "advantages": [
+      "Tames overfitting and stabilizes models in the presence of multicollinearity.",
+      "Lasso creates simpler, sparser models that are easier to interpret and deploy."
+    ],
+    "limitations": [
+      "Features must be standardized first, adding a preprocessing requirement.",
+      "Ridge cannot perform sparse feature selection (coefficients approach zero but never reach it)."
+    ],
+    "common_mistakes": [
+      "Applying Ridge or Lasso without standardizing features first.",
+      "Setting alpha too high, which overly flattens coefficients into underfitting."
+    ],
+    "related_concepts": ["parameters-hyperparameters", "overfitting-underfitting", "encoding-scaling"],
+    "knowledge_check": [
+      {
+        "id": "q-reg-2",
+        "question": "Which regularization technique can drive feature coefficients exactly to zero?",
+        "options": [
+          {"id": "a", "text": "Ridge regression (L2)"},
+          {"id": "b", "text": "Ordinary Least Squares"},
+          {"id": "c", "text": "Lasso regression (L1)"},
+          {"id": "d", "text": "K-Means clustering"}
+        ],
+        "correct_option_id": "c",
+        "explanation": "Lasso uses an L1 diamond penalty geometry that intersects coordinate axes, driving less informative weights to absolute zero."
+      }
+    ]
+  }
+]

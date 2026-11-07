@@ -1,0 +1,249 @@
+[
+  {
+    "id": "ai-ml-dl",
+    "title": "Artificial Intelligence, Machine Learning & Deep Learning",
+    "level": "beginner",
+    "category": "foundations",
+    "short_definition": "AI is the broad field of smart machines, ML is learning from data without explicit rules, and DL uses multi-layered neural networks.",
+    "simple_explanation": "Imagine AI as the entire universe of smart computer systems. Machine Learning is a galaxy inside AI where machines learn patterns from examples instead of having every rule hardcoded. Deep Learning is a solar system inside ML that uses deep artificial neural networks inspired by the human brain to learn complex patterns like image and speech recognition.",
+    "real_world_example": "Spam filters (ML) classify incoming emails by learning spam patterns from thousands of past emails, whereas voice assistants like Siri or self-driving car vision use Deep Learning.",
+    "key_points": [
+      "AI is the umbrella term for any technique enabling computers to mimic human intelligence.",
+      "ML algorithms build mathematical models based on sample training data to make predictions or decisions.",
+      "Deep Learning is a specialized subset of ML using deep multi-layered neural networks."
+    ],
+    "common_mistakes": [
+      "Using AI and ML as interchangeable synonyms without realizing ML is a specific technique within AI.",
+      "Assuming Deep Learning is always superior to classic ML; for structured tabular data, classic ML (like Random Forests) often outperforms neural networks with less compute."
+    ],
+    "related_concepts": ["supervised-unsupervised", "dataset-features-target", "model-selection"]
+  },
+  {
+    "id": "dataset-features-target",
+    "title": "Dataset, Features & Target",
+    "level": "beginner",
+    "category": "data",
+    "short_definition": "A dataset is a collection of data; features are the input clues (X), and the target is the answer we want to predict (y).",
+    "simple_explanation": "Think of a spreadsheet where each row is a patient and each column is a measurement. Columns like age, blood pressure, and cholesterol are 'features' (the inputs). The column stating whether the patient has heart disease or not is the 'target' (the label we want our model to predict for new patients).",
+    "real_world_example": "When predicting house prices, features include square footage, bedrooms, and location; the target is the sale price in dollars.",
+    "key_points": [
+      "Features (often denoted as X) are independent variables representing input signals.",
+      "The Target (often denoted as y or label) is the dependent variable we wish to forecast.",
+      "Rows in the dataset represent individual samples or observations."
+    ],
+    "common_mistakes": [
+      "Accidentally including the target column inside the input feature matrix, causing 100% fake accuracy (data leakage).",
+      "Treating unique identifiers (like Student ID or User UUID) as predictive features."
+    ],
+    "related_concepts": ["preprocessing", "train-val-test", "regression-classification"]
+  },
+  {
+    "id": "supervised-unsupervised",
+    "title": "Supervised vs Unsupervised Learning",
+    "level": "beginner",
+    "category": "foundations",
+    "short_definition": "Supervised learning learns from labelled inputs and answers; unsupervised learning finds hidden patterns without any answer keys.",
+    "simple_explanation": "In supervised learning, a teacher gives you flashcards with math problems on the front and correct answers on the back. You learn the connection. In unsupervised learning, nobody tells you what the answers are; you are given a basket of mixed fruits and your job is to group similar-looking fruits together based on color and shape.",
+    "real_world_example": "Predicting whether a loan applicant will default based on historical repaid/defaulted loans is Supervised. Grouping e-commerce customers into purchasing personas based on browsing behavior is Unsupervised.",
+    "key_points": [
+      "Supervised learning requires ground-truth labels for every training sample.",
+      "Supervised tasks split into Regression (predicting continuous numbers) and Classification (predicting discrete classes).",
+      "Unsupervised learning discovers clusters, patterns, and dimensionality reductions without target labels."
+    ],
+    "common_mistakes": [
+      "Trying to evaluate an unsupervised clustering model using supervised accuracy metrics.",
+      "Expecting unsupervised models to automatically assign human-meaningful labels to clusters without manual inspection."
+    ],
+    "related_concepts": ["regression-classification", "dataset-features-target", "evaluation-metrics"]
+  },
+  {
+    "id": "regression-classification",
+    "title": "Regression vs Classification",
+    "level": "beginner",
+    "category": "foundations",
+    "short_definition": "Regression predicts continuous quantities (how much); classification predicts categories or discrete labels (which one).",
+    "simple_explanation": "If your answer can be any decimal number on a continuum (such as temperature, price, or time to delivery), it is a Regression problem. If your answer is a discrete category, bucket, or label (such as spam/not-spam, disease positive/negative, or cat/dog/bird), it is a Classification problem.",
+    "real_world_example": "Predicting tomorrow's temperature in Celsius (e.g. 24.5°C) is Regression. Predicting whether it will rain or not rain tomorrow is Classification.",
+    "key_points": [
+      "Regression targets are continuous numbers (floating-point values).",
+      "Classification targets are discrete classes (binary or multi-class).",
+      "Evaluation metrics are completely different: R² and RMSE for regression; Accuracy and F1 for classification."
+    ],
+    "common_mistakes": [
+      "Applying classification metrics (like accuracy) to regression models, or regression metrics (like MSE) directly to class label IDs.",
+      "Treating integer-coded categories (e.g., zip codes 10001, 10002) as continuous numbers in regression."
+    ],
+    "related_concepts": ["evaluation-metrics", "supervised-unsupervised", "model-selection"]
+  },
+  {
+    "id": "train-val-test",
+    "title": "Training, Validation & Testing Sets",
+    "level": "beginner",
+    "category": "evaluation",
+    "short_definition": "Splitting data so models learn on train data, tune on validation data, and are fairly evaluated on unseen test data.",
+    "simple_explanation": "Imagine studying for a final exam. The practice exercises in your textbook are the Training set. The mock practice quiz you take to decide which topics to revise is the Validation set. The actual final exam, with questions you have never seen before, is the Test set.",
+    "real_world_example": "Splitting 1,000 credit card transactions into 700 for training, 150 for tuning thresholds, and 150 held-out strictly for the final reliability report.",
+    "key_points": [
+      "Training set: used directly by the algorithm to optimize model weights and parameters.",
+      "Validation set: used to evaluate performance while tuning hyperparameters and selecting models.",
+      "Test set: held out strictly until final evaluation to assess genuine real-world generalization."
+    ],
+    "common_mistakes": [
+      "Evaluating a model on the same data it was trained on (giving a false sense of perfection).",
+      "Allowing test data to leak into preprocessing transformations."
+    ],
+    "related_concepts": ["overfitting-underfitting", "cross-validation", "evaluation-metrics"]
+  },
+  {
+    "id": "preprocessing",
+    "title": "Data Preprocessing",
+    "level": "beginner",
+    "category": "data",
+    "short_definition": "Transforming messy real-world raw data into clean, formatted numerical features suitable for machine learning algorithms.",
+    "simple_explanation": "Raw real-world datasets are usually messy: some fields have typos, missing entries, varying units, or text words that math equations cannot calculate. Preprocessing is like preparing cooking ingredients—washing, chopping, and measuring them before turning on the stove.",
+    "real_world_example": "Converting customer country ('India', 'USA') into one-hot encoded binary columns, and scaling salary (\\$20,000 to \\$200,000) so it doesn't dwarf age (20 to 60).",
+    "key_points": [
+      "Most scikit-learn models require all input features to be numeric and finite.",
+      "Preprocessing includes imputation of missing values, categorical encoding, and feature scaling.",
+      "All transformation parameters (like mean and standard deviation) must be calculated from training data only to prevent data leakage."
+    ],
+    "common_mistakes": [
+      "Fitting scalers or encoders on the entire dataset before doing train/test split.",
+      "Dropping rows indiscriminately whenever a missing value appears, throwing away valuable signal."
+    ],
+    "related_concepts": ["missing-values", "encoding-scaling", "train-val-test"]
+  },
+  {
+    "id": "missing-values",
+    "title": "Handling Missing Values",
+    "level": "beginner",
+    "category": "data",
+    "short_definition": "Strategies to detect and handle NaN, blank, or null values in datasets via removal or intelligent imputation.",
+    "simple_explanation": "When survey respondents leave their annual income blank, what should we do? If we delete their entire row, we lose all their other answers. Instead, we can impute (fill in) the missing value using the median of the other respondents or a most frequent category indicator.",
+    "real_world_example": "Imputing missing student exam scores using median marks, while flagging missing entries with a missingness indicator.",
+    "key_points": [
+      "Missing Completely at Random (MCAR), Missing at Random (MAR), and Missing Not at Random (MNAR) represent different root causes.",
+      "Imputation techniques include mean/median for numeric features, and mode or 'Missing' category for categorical features.",
+      "Median is preferred over mean when numeric distributions have strong outliers or skewness."
+    ],
+    "common_mistakes": [
+      "Using the mean to impute heavily skewed distributions like wealth or income.",
+      "Computing the imputation statistic on test data instead of learning it from training data."
+    ],
+    "related_concepts": ["preprocessing", "encoding-scaling"]
+  },
+  {
+    "id": "encoding-scaling",
+    "title": "Feature Encoding & Scaling",
+    "level": "beginner",
+    "category": "data",
+    "short_definition": "Encoding converts text/categories to numbers; scaling standardizes different measurement units into comparable ranges.",
+    "simple_explanation": "Algorithms can only compute numbers. If a column has 'Red', 'Green', 'Blue', One-Hot Encoding converts it into binary flags. If age is 20-80 and income is 20,000-500,000, distance-based algorithms like KNN or SVM will let income dominate completely unless both are scaled to a standard range.",
+    "real_world_example": "StandardScaler normalizes age and income so both have a mean of 0 and a standard deviation of 1.",
+    "key_points": [
+      "One-Hot Encoding creates binary 0/1 columns for nominal categories without inherent order.",
+      "Ordinal Encoding maps ordered categories (e.g., 'Low'=1, 'Medium'=2, 'High'=3).",
+      "StandardScaler (z-score) and MinMaxScaler are vital for distance-sensitive algorithms like KNN, SVM, and gradient descent."
+    ],
+    "common_mistakes": [
+      "Using ordinal numbers (1, 2, 3) for nominal categories (e.g. Red=1, Green=2, Blue=3), which tricks the model into thinking Blue is 3x Red.",
+      "Forgetting to scale features before training KNN or Logistic Regression with regularization."
+    ],
+    "related_concepts": ["preprocessing", "missing-values"]
+  },
+  {
+    "id": "overfitting-underfitting",
+    "title": "Overfitting vs Underfitting (Bias-Variance Tradeoff)",
+    "level": "beginner",
+    "category": "model",
+    "short_definition": "Underfitting is too simple to learn the pattern; overfitting memorizes noise and fails on new data.",
+    "simple_explanation": "Underfitting is like a student who barely opened the book and scores 40% on practice and 40% on exams (high bias). Overfitting is like a student who memorized the exact questions and answers of last year's exam word-for-word: they get 100% on old practice tests, but fail when test questions change slightly (high variance). A good model learns the underlying concepts.",
+    "real_world_example": "A decision tree of infinite depth with 1 sample per leaf has 100% training accuracy but drops to 60% on new test cases.",
+    "key_points": [
+      "Underfitting (High Bias): high training error and high test error.",
+      "Overfitting (High Variance): very low training error but high test error.",
+      "Regularization, cross-validation, pruning, and collecting more data help combat overfitting."
+    ],
+    "common_mistakes": [
+      "Celebrating 100% training accuracy without checking performance on the test set.",
+      "Making a model hyper-complex when a simple linear or regularized model generalizes better."
+    ],
+    "related_concepts": ["train-val-test", "cross-validation", "evaluation-metrics"]
+  },
+  {
+    "id": "parameters-hyperparameters",
+    "title": "Parameters vs Hyperparameters",
+    "level": "beginner",
+    "category": "model",
+    "short_definition": "Parameters are learned by the algorithm from data; hyperparameters are settings configured by the engineer prior to training.",
+    "simple_explanation": "In linear regression $y = mx + c$, the slope $m$ and intercept $c$ are parameters learned automatically through math. In contrast, deciding how many trees to build in a Random Forest (`n_estimators=100`) or the maximum depth (`max_depth=5`) are hyperparameters set by you before training starts.",
+    "real_world_example": "In KNN, the choice of $k=5$ neighbors is a hyperparameter; the stored training data vectors are the model's internal representation.",
+    "key_points": [
+      "Parameters are updated automatically during optimization (e.g., weights and biases).",
+      "Hyperparameters govern the training process and model structure (e.g., learning rate, tree depth, regularization strength alpha).",
+      "Hyperparameter tuning searches for the best combination using techniques like Grid Search or Random Search."
+    ],
+    "common_mistakes": [
+      "Tuning hyperparameters on the test set instead of using cross-validation on training data.",
+      "Accepting default hyperparameters as universally optimal for all datasets."
+    ],
+    "related_concepts": ["cross-validation", "overfitting-underfitting"]
+  },
+  {
+    "id": "cross-validation",
+    "title": "Cross-Validation (K-Fold)",
+    "level": "intermediate",
+    "category": "evaluation",
+    "short_definition": "A resampling technique that partitions data into K subsets to evaluate model stability across multiple training and testing folds.",
+    "simple_explanation": "In 5-fold cross-validation, you divide your data into 5 equal parts. In round 1, folds 1-4 train the model and fold 5 tests it. In round 2, folds 1, 2, 3, 5 train and fold 4 tests. You repeat 5 times so every single sample gets evaluated once, and average the 5 scores for a trustworthy assessment.",
+    "real_world_example": "Evaluating an algorithm on a small medical dataset of 200 patients using 5-fold CV to ensure performance isn't just an artifact of one lucky split.",
+    "key_points": [
+      "K-Fold CV provides a more reliable estimate of out-of-sample generalization than a single train/test split.",
+      "Stratified K-Fold preserves class percentage ratios in each fold for imbalanced classification tasks.",
+      "The variance across fold scores indicates model stability."
+    ],
+    "common_mistakes": [
+      "Performing preprocessing (like PCA or feature selection) on the entire dataset prior to K-fold cross-validation.",
+      "Using regular K-Fold on severely imbalanced datasets instead of Stratified K-Fold."
+    ],
+    "related_concepts": ["train-val-test", "evaluation-metrics", "model-selection"]
+  },
+  {
+    "id": "evaluation-metrics",
+    "title": "Evaluation Metrics for Classification and Regression",
+    "level": "beginner",
+    "category": "evaluation",
+    "short_definition": "Quantitative scores measuring how well predictions match actual ground truth across different task types.",
+    "simple_explanation": "If a disease affects 1% of people, a lazy model that predicts 'healthy' for everyone achieves 99% accuracy while helping zero patients! That is why we need Precision, Recall, and F1 score for classification. For regression, we measure real error in units using MAE (Mean Absolute Error) and RMSE (Root Mean Squared Error).",
+    "real_world_example": "Cancer detection demands high Recall (minimize false negatives), whereas spam detection demands high Precision (don't send real emails to spam).",
+    "key_points": [
+      "Classification: Accuracy, Precision, Recall, F1 Score, Confusion Matrix.",
+      "Regression: MAE (average absolute error), MSE (squared error penalizing large mistakes), RMSE (root of MSE in original units), and R² (variance explained).",
+      "Never rank regression models by accuracy, and always choose classification metrics aligned with business cost of false positives vs false negatives."
+    ],
+    "common_mistakes": [
+      "Relying solely on Accuracy when classes are heavily imbalanced.",
+      "Confusing MAE and RMSE: RMSE penalizes large errors much more severely than MAE."
+    ],
+    "related_concepts": ["regression-classification", "model-selection"]
+  },
+  {
+    "id": "model-selection",
+    "title": "Model Selection & Generalization",
+    "level": "intermediate",
+    "category": "model",
+    "short_definition": "Choosing the right algorithm by balancing predictive power, dataset size, interpretability, training speed, and generalization.",
+    "simple_explanation": "No single machine learning model is the champion for every single problem (the No Free Lunch theorem). If you need an explainable model for medical or financial compliance, a Logistic Regression or Decision Tree is great. If you need maximum predictive accuracy on complex tabular data, an ensemble like Random Forest or Gradient Boosting often wins.",
+    "real_world_example": "A bank selecting Logistic Regression over a Black-box model because loan rejection reasons must be legally explained to applicants.",
+    "key_points": [
+      "No Free Lunch Theorem: No single model works best across all problems.",
+      "Trade-offs: Performance vs Interpretability vs Training Speed vs Memory footprint.",
+      "Simple models are easier to maintain, debug, and serve in production environments."
+    ],
+    "common_mistakes": [
+      "Always reaching for complex ensembles or deep learning when a clean linear model solves the problem faster and with fewer parameters.",
+      "Ignoring inference latency and production constraints when choosing a model."
+    ],
+    "related_concepts": ["overfitting-underfitting", "evaluation-metrics"]
+  }
+]

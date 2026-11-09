@@ -1,0 +1,2973 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PADH LE BC (Break the Code)",
+    "description": "Backend API for PADH LE BC (Break the Code) \u2014 Educational Machine Learning & Model Comparison Platform",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "operationId": "health_check_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/concepts": {
+      "get": {
+        "tags": [
+          "Concepts"
+        ],
+        "summary": "List Concepts",
+        "operationId": "list_concepts_api_concepts_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Level"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConceptListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/concepts/{concept_id}": {
+      "get": {
+        "tags": [
+          "Concepts"
+        ],
+        "summary": "Get Concept",
+        "operationId": "get_concept_api_concepts__concept_id__get",
+        "parameters": [
+          {
+            "name": "concept_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Concept Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConceptBase"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lessons": {
+      "get": {
+        "tags": [
+          "Lessons"
+        ],
+        "summary": "List Lessons",
+        "operationId": "list_lessons_api_lessons_get",
+        "parameters": [
+          {
+            "name": "unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/lessons/{lesson_id}": {
+      "get": {
+        "tags": [
+          "Lessons"
+        ],
+        "summary": "Get Lesson",
+        "operationId": "get_lesson_api_lessons__lesson_id__get",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/algorithms": {
+      "get": {
+        "tags": [
+          "Algorithms"
+        ],
+        "summary": "List Algorithms",
+        "operationId": "list_algorithms_api_algorithms_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "task_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Task Type"
+            }
+          },
+          {
+            "name": "trainable_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Trainable Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlgorithmListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/algorithms/{algorithm_id}": {
+      "get": {
+        "tags": [
+          "Algorithms"
+        ],
+        "summary": "Get Algorithm",
+        "operationId": "get_algorithm_api_algorithms__algorithm_id__get",
+        "parameters": [
+          {
+            "name": "algorithm_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Algorithm Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlgorithmDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets/upload": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Upload a CSV dataset",
+        "operationId": "upload_dataset_api_datasets_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_dataset_api_datasets_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetUploadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "List uploaded datasets",
+        "operationId": "list_datasets_api_datasets_get",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets/{dataset_id}": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Get dataset metadata",
+        "operationId": "get_dataset_metadata_api_datasets__dataset_id__get",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets/{dataset_id}/profile": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Inspect dataset profile and statistics",
+        "operationId": "get_dataset_profile_api_datasets__dataset_id__profile_get",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetProfileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets/{dataset_id}/configure": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Select target column and confirm task type",
+        "operationId": "configure_dataset_target_api_datasets__dataset_id__configure_post",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatasetConfigureRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetConfigureResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models": {
+      "get": {
+        "tags": [
+          "Models"
+        ],
+        "summary": "List trainable models",
+        "operationId": "list_trainable_models_api_models_get",
+        "parameters": [
+          {
+            "name": "task_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Task Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models/recommend": {
+      "post": {
+        "tags": [
+          "Models"
+        ],
+        "summary": "Recommend candidate models",
+        "operationId": "recommend_models_api_models_recommend_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelRecommendationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelRecommendationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments": {
+      "post": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Train and compare multiple models on a dataset",
+        "operationId": "create_experiment_api_experiments_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "List experiment history",
+        "operationId": "list_experiments_api_experiments_get",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{experiment_id}": {
+      "get": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Get experiment status, models, metrics and comparison",
+        "operationId": "get_experiment_api_experiments__experiment_id__get",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{experiment_id}/report": {
+      "get": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Get complete evaluation and comparison report",
+        "operationId": "get_experiment_report_api_experiments__experiment_id__report_get",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Experiment Report Api Experiments  Experiment Id  Report Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{experiment_id}/tune": {
+      "post": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Tune hyperparameters for a model in an experiment",
+        "operationId": "tune_model_api_experiments__experiment_id__tune_post",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentTuneRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentTuneResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/progress": {
+      "get": {
+        "tags": [
+          "Progress"
+        ],
+        "summary": "Get learner progress",
+        "operationId": "get_learner_progress_api_progress_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "default_learner",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnerProgressResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/progress/lessons/{lesson_id}/complete": {
+      "post": {
+        "tags": [
+          "Progress"
+        ],
+        "summary": "Mark a lesson as completed",
+        "operationId": "mark_lesson_complete_api_progress_lessons__lesson_id__complete_post",
+        "parameters": [
+          {
+            "name": "lesson_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Lesson Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/LessonCompleteRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonCompleteResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Root"
+        ],
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlgorithmDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "short_description": {
+            "type": "string",
+            "title": "Short Description"
+          },
+          "intuition": {
+            "type": "string",
+            "title": "Intuition"
+          },
+          "mathematical_formula": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mathematical Formula"
+          },
+          "step_by_step_working": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Step By Step Working"
+          },
+          "parameters": {
+            "items": {
+              "$ref": "#/components/schemas/ParameterSchema"
+            },
+            "type": "array",
+            "title": "Parameters"
+          },
+          "advantages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Advantages"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "use_cases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Use Cases"
+          },
+          "when_to_use": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "When To Use"
+          },
+          "when_to_avoid": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "When To Avoid"
+          },
+          "python_snippet": {
+            "type": "string",
+            "title": "Python Snippet"
+          },
+          "code_explanation": {
+            "type": "string",
+            "title": "Code Explanation"
+          },
+          "curriculum_status": {
+            "type": "string",
+            "title": "Curriculum Status"
+          },
+          "learning_content_status": {
+            "type": "string",
+            "title": "Learning Content Status"
+          },
+          "training_supported": {
+            "type": "boolean",
+            "title": "Training Supported"
+          },
+          "default_hyperparameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Default Hyperparameters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "task_type",
+          "short_description",
+          "intuition",
+          "python_snippet",
+          "code_explanation",
+          "curriculum_status",
+          "learning_content_status",
+          "training_supported"
+        ],
+        "title": "AlgorithmDetail"
+      },
+      "AlgorithmListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "algorithms": {
+            "items": {
+              "$ref": "#/components/schemas/AlgorithmSummary"
+            },
+            "type": "array",
+            "title": "Algorithms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "algorithms"
+        ],
+        "title": "AlgorithmListResponse"
+      },
+      "AlgorithmSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "short_description": {
+            "type": "string",
+            "title": "Short Description"
+          },
+          "curriculum_status": {
+            "type": "string",
+            "title": "Curriculum Status"
+          },
+          "learning_content_status": {
+            "type": "string",
+            "title": "Learning Content Status"
+          },
+          "training_supported": {
+            "type": "boolean",
+            "title": "Training Supported"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "task_type",
+          "short_description",
+          "curriculum_status",
+          "learning_content_status",
+          "training_supported"
+        ],
+        "title": "AlgorithmSummary"
+      },
+      "Body_upload_dataset_api_datasets_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "CSV file to upload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_dataset_api_datasets_upload_post"
+      },
+      "ColumnProfile": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "inferred_type": {
+            "type": "string",
+            "title": "Inferred Type"
+          },
+          "missing_count": {
+            "type": "integer",
+            "title": "Missing Count"
+          },
+          "missing_percentage": {
+            "type": "number",
+            "title": "Missing Percentage"
+          },
+          "unique_count": {
+            "type": "integer",
+            "title": "Unique Count"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean"
+          },
+          "std": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Std"
+          },
+          "median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median"
+          },
+          "top_categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Categories"
+          },
+          "sample_values": {
+            "items": {},
+            "type": "array",
+            "title": "Sample Values"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "inferred_type",
+          "missing_count",
+          "missing_percentage",
+          "unique_count"
+        ],
+        "title": "ColumnProfile"
+      },
+      "ConceptBase": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level",
+            "default": "beginner"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "default": "foundations"
+          },
+          "short_definition": {
+            "type": "string",
+            "title": "Short Definition"
+          },
+          "simple_explanation": {
+            "type": "string",
+            "title": "Simple Explanation"
+          },
+          "real_world_example": {
+            "type": "string",
+            "title": "Real World Example"
+          },
+          "key_points": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Key Points"
+          },
+          "common_mistakes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Common Mistakes"
+          },
+          "related_concepts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Related Concepts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "short_definition",
+          "simple_explanation",
+          "real_world_example"
+        ],
+        "title": "ConceptBase"
+      },
+      "ConceptListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "concepts": {
+            "items": {
+              "$ref": "#/components/schemas/ConceptSummary"
+            },
+            "type": "array",
+            "title": "Concepts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "concepts"
+        ],
+        "title": "ConceptListResponse"
+      },
+      "ConceptSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "short_definition": {
+            "type": "string",
+            "title": "Short Definition"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "level",
+          "category",
+          "short_definition"
+        ],
+        "title": "ConceptSummary"
+      },
+      "DatasetConfigureRequest": {
+        "properties": {
+          "target_column": {
+            "type": "string",
+            "title": "Target Column"
+          },
+          "task_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_column"
+        ],
+        "title": "DatasetConfigureRequest"
+      },
+      "DatasetConfigureResponse": {
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "target_column": {
+            "type": "string",
+            "title": "Target Column"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "compatible_models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Compatible Models"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_id",
+          "target_column",
+          "task_type",
+          "compatible_models"
+        ],
+        "title": "DatasetConfigureResponse"
+      },
+      "DatasetListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "datasets": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetSummary"
+            },
+            "type": "array",
+            "title": "Datasets"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "datasets"
+        ],
+        "title": "DatasetListResponse"
+      },
+      "DatasetProfileResponse": {
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "original_filename": {
+            "type": "string",
+            "title": "Original Filename"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "column_count": {
+            "type": "integer",
+            "title": "Column Count"
+          },
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columns"
+          },
+          "column_profiles": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnProfile"
+            },
+            "type": "array",
+            "title": "Column Profiles"
+          },
+          "duplicate_rows": {
+            "type": "integer",
+            "title": "Duplicate Rows"
+          },
+          "target_column": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Column"
+          },
+          "detected_task": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detected Task"
+          },
+          "preview_rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Preview Rows"
+          },
+          "class_distribution": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Distribution"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_id",
+          "original_filename",
+          "row_count",
+          "column_count",
+          "columns",
+          "column_profiles",
+          "duplicate_rows",
+          "preview_rows"
+        ],
+        "title": "DatasetProfileResponse"
+      },
+      "DatasetSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "original_filename": {
+            "type": "string",
+            "title": "Original Filename"
+          },
+          "file_size_bytes": {
+            "type": "integer",
+            "title": "File Size Bytes"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "column_count": {
+            "type": "integer",
+            "title": "Column Count"
+          },
+          "target_column": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Column"
+          },
+          "detected_task": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detected Task"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "original_filename",
+          "file_size_bytes",
+          "row_count",
+          "column_count",
+          "status",
+          "created_at"
+        ],
+        "title": "DatasetSummary"
+      },
+      "DatasetUploadResponse": {
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "original_filename": {
+            "type": "string",
+            "title": "Original Filename"
+          },
+          "file_size_bytes": {
+            "type": "integer",
+            "title": "File Size Bytes"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "rows": {
+            "type": "integer",
+            "title": "Rows"
+          },
+          "columns": {
+            "type": "integer",
+            "title": "Columns"
+          },
+          "profile_url": {
+            "type": "string",
+            "title": "Profile Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_id",
+          "original_filename",
+          "file_size_bytes",
+          "status",
+          "rows",
+          "columns",
+          "profile_url"
+        ],
+        "title": "DatasetUploadResponse"
+      },
+      "ExperimentCreateRequest": {
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "target_column": {
+            "type": "string",
+            "title": "Target Column"
+          },
+          "task_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Type"
+          },
+          "model_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Model Ids"
+          },
+          "test_size": {
+            "type": "number",
+            "maximum": 0.5,
+            "minimum": 0.05,
+            "title": "Test Size",
+            "default": 0.2
+          },
+          "random_state": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Random State",
+            "default": 42
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority",
+            "default": "performance"
+          },
+          "hyperparameters": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hyperparameters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_id",
+          "target_column",
+          "model_ids"
+        ],
+        "title": "ExperimentCreateRequest"
+      },
+      "ExperimentListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "experiments": {
+            "items": {
+              "$ref": "#/components/schemas/ExperimentSummary"
+            },
+            "type": "array",
+            "title": "Experiments"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "experiments"
+        ],
+        "title": "ExperimentListResponse"
+      },
+      "ExperimentResponse": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "target_column": {
+            "type": "string",
+            "title": "Target Column"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "test_size": {
+            "type": "number",
+            "title": "Test Size"
+          },
+          "random_state": {
+            "type": "integer",
+            "title": "Random State"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ModelEvaluationResult"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ModelComparisonSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "dataset_id",
+          "target_column",
+          "task_type",
+          "test_size",
+          "random_state",
+          "status",
+          "priority",
+          "results",
+          "created_at"
+        ],
+        "title": "ExperimentResponse"
+      },
+      "ExperimentSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "target_column": {
+            "type": "string",
+            "title": "Target Column"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "model_count": {
+            "type": "integer",
+            "title": "Model Count"
+          },
+          "best_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Model"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "dataset_id",
+          "target_column",
+          "task_type",
+          "status",
+          "model_count",
+          "created_at"
+        ],
+        "title": "ExperimentSummary"
+      },
+      "ExperimentTuneRequest": {
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "param_grid": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "items": {},
+                  "type": "array"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Param Grid"
+          },
+          "cv_folds": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 2.0,
+            "title": "Cv Folds",
+            "default": 3
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_id"
+        ],
+        "title": "ExperimentTuneRequest"
+      },
+      "ExperimentTuneResponse": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "original_parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Original Parameters"
+          },
+          "best_parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Best Parameters"
+          },
+          "before_metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Before Metrics"
+          },
+          "after_metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "After Metrics"
+          },
+          "improvement_summary": {
+            "type": "string",
+            "title": "Improvement Summary"
+          },
+          "meaningful_improvement": {
+            "type": "boolean",
+            "title": "Meaningful Improvement"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "model_id",
+          "original_parameters",
+          "best_parameters",
+          "before_metrics",
+          "after_metrics",
+          "improvement_summary",
+          "meaningful_improvement"
+        ],
+        "title": "ExperimentTuneResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LearnerProgressResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "completed_lessons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Completed Lessons"
+          },
+          "total_completed": {
+            "type": "integer",
+            "title": "Total Completed"
+          },
+          "recent_lessons": {
+            "items": {
+              "$ref": "#/components/schemas/LessonProgressItem"
+            },
+            "type": "array",
+            "title": "Recent Lessons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "total_completed"
+        ],
+        "title": "LearnerProgressResponse"
+      },
+      "LessonCompleteRequest": {
+        "properties": {
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id",
+            "default": "default_learner"
+          }
+        },
+        "type": "object",
+        "title": "LessonCompleteRequest"
+      },
+      "LessonCompleteResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "lesson_id": {
+            "type": "string",
+            "title": "Lesson Id"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "lesson_id",
+          "completed",
+          "message"
+        ],
+        "title": "LessonCompleteResponse"
+      },
+      "LessonDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "module": {
+            "type": "string",
+            "title": "Module"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "order": {
+            "type": "integer",
+            "title": "Order"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "estimated_minutes": {
+            "type": "integer",
+            "title": "Estimated Minutes",
+            "default": 15
+          },
+          "learning_objectives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Learning Objectives"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "definitions": {
+            "items": {
+              "$ref": "#/components/schemas/TermDefinition"
+            },
+            "type": "array",
+            "title": "Definitions"
+          },
+          "mathematical_explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mathematical Explanation"
+          },
+          "real_world_example": {
+            "type": "string",
+            "title": "Real World Example"
+          },
+          "step_by_step_working": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Step By Step Working"
+          },
+          "python_code": {
+            "type": "string",
+            "title": "Python Code"
+          },
+          "code_explanation": {
+            "type": "string",
+            "title": "Code Explanation"
+          },
+          "advantages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Advantages"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "common_mistakes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Common Mistakes"
+          },
+          "related_concepts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Related Concepts"
+          },
+          "knowledge_check": {
+            "items": {
+              "$ref": "#/components/schemas/QuizQuestion"
+            },
+            "type": "array",
+            "title": "Knowledge Check"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "unit",
+          "module",
+          "title",
+          "order",
+          "level",
+          "explanation",
+          "real_world_example",
+          "python_code",
+          "code_explanation"
+        ],
+        "title": "LessonDetail"
+      },
+      "LessonListResponse": {
+        "properties": {
+          "total_lessons": {
+            "type": "integer",
+            "title": "Total Lessons"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/ModuleLessons"
+            },
+            "type": "array",
+            "title": "Units"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_lessons",
+          "units"
+        ],
+        "title": "LessonListResponse"
+      },
+      "LessonProgressItem": {
+        "properties": {
+          "lesson_id": {
+            "type": "string",
+            "title": "Lesson Id"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          },
+          "completed_at": {
+            "type": "string",
+            "title": "Completed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lesson_id",
+          "completed",
+          "completed_at"
+        ],
+        "title": "LessonProgressItem"
+      },
+      "LessonSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "module": {
+            "type": "string",
+            "title": "Module"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "order": {
+            "type": "integer",
+            "title": "Order"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "estimated_minutes": {
+            "type": "integer",
+            "title": "Estimated Minutes",
+            "default": 15
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "unit",
+          "module",
+          "title",
+          "order",
+          "level"
+        ],
+        "title": "LessonSummary"
+      },
+      "ModelComparisonSummary": {
+        "properties": {
+          "best_model_id": {
+            "type": "string",
+            "title": "Best Model Id"
+          },
+          "best_model_name": {
+            "type": "string",
+            "title": "Best Model Name"
+          },
+          "primary_metric_name": {
+            "type": "string",
+            "title": "Primary Metric Name"
+          },
+          "ranked_models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelRankingItem"
+            },
+            "type": "array",
+            "title": "Ranked Models"
+          },
+          "tradeoff_analysis": {
+            "type": "string",
+            "title": "Tradeoff Analysis"
+          },
+          "recommendation_reason": {
+            "type": "string",
+            "title": "Recommendation Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "best_model_id",
+          "best_model_name",
+          "primary_metric_name",
+          "ranked_models",
+          "tradeoff_analysis",
+          "recommendation_reason"
+        ],
+        "title": "ModelComparisonSummary"
+      },
+      "ModelEvaluationResult": {
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "hyperparameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Hyperparameters"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metrics"
+          },
+          "training_duration_seconds": {
+            "type": "number",
+            "title": "Training Duration Seconds"
+          },
+          "train_metric": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Train Metric"
+          },
+          "test_metric": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Test Metric"
+          },
+          "overfitting_warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overfitting Warning"
+          },
+          "cv_scores": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cv Scores"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          },
+          "is_tuned": {
+            "type": "boolean",
+            "title": "Is Tuned",
+            "default": false
+          },
+          "tuning_comparison": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tuning Comparison"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_id",
+          "model_name",
+          "category",
+          "hyperparameters",
+          "metrics",
+          "training_duration_seconds",
+          "status"
+        ],
+        "title": "ModelEvaluationResult"
+      },
+      "ModelInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "short_description": {
+            "type": "string",
+            "title": "Short Description"
+          },
+          "training_supported": {
+            "type": "boolean",
+            "title": "Training Supported"
+          },
+          "default_hyperparameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Default Hyperparameters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "task_type",
+          "short_description",
+          "training_supported"
+        ],
+        "title": "ModelInfo"
+      },
+      "ModelListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelInfo"
+            },
+            "type": "array",
+            "title": "Models"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "models"
+        ],
+        "title": "ModelListResponse"
+      },
+      "ModelRankingItem": {
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "primary_metric_value": {
+            "type": "number",
+            "title": "Primary Metric Value"
+          },
+          "training_duration_seconds": {
+            "type": "number",
+            "title": "Training Duration Seconds"
+          },
+          "pros": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pros"
+          },
+          "cons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "model_id",
+          "model_name",
+          "primary_metric_value",
+          "training_duration_seconds",
+          "pros",
+          "cons"
+        ],
+        "title": "ModelRankingItem"
+      },
+      "ModelRecommendationItem": {
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "suitability_score": {
+            "type": "number",
+            "title": "Suitability Score"
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning"
+          },
+          "pros_for_dataset": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pros For Dataset"
+          },
+          "cons_for_dataset": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cons For Dataset"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_id",
+          "model_name",
+          "category",
+          "suitability_score",
+          "reasoning",
+          "pros_for_dataset",
+          "cons_for_dataset"
+        ],
+        "title": "ModelRecommendationItem"
+      },
+      "ModelRecommendationRequest": {
+        "properties": {
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id"
+          },
+          "row_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row Count"
+          },
+          "column_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column Count"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority",
+            "default": "performance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "task_type"
+        ],
+        "title": "ModelRecommendationRequest"
+      },
+      "ModelRecommendationResponse": {
+        "properties": {
+          "task_type": {
+            "type": "string",
+            "title": "Task Type"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
+          "recommended_models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelRecommendationItem"
+            },
+            "type": "array",
+            "title": "Recommended Models"
+          },
+          "general_guidance": {
+            "type": "string",
+            "title": "General Guidance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "task_type",
+          "priority",
+          "recommended_models",
+          "general_guidance"
+        ],
+        "title": "ModelRecommendationResponse"
+      },
+      "ModuleLessons": {
+        "properties": {
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "module_title": {
+            "type": "string",
+            "title": "Module Title"
+          },
+          "lessons": {
+            "items": {
+              "$ref": "#/components/schemas/LessonSummary"
+            },
+            "type": "array",
+            "title": "Lessons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "unit",
+          "module_title",
+          "lessons"
+        ],
+        "title": "ModuleLessons"
+      },
+      "ParameterSchema": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "default": {
+            "title": "Default"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "allowed_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Range"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "default",
+          "description"
+        ],
+        "title": "ParameterSchema"
+      },
+      "QuizOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "title": "QuizOption"
+      },
+      "QuizQuestion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/QuizOption"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "correct_option_id": {
+            "type": "string",
+            "title": "Correct Option Id"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "options",
+          "correct_option_id",
+          "explanation"
+        ],
+        "title": "QuizQuestion"
+      },
+      "TermDefinition": {
+        "properties": {
+          "term": {
+            "type": "string",
+            "title": "Term"
+          },
+          "definition": {
+            "type": "string",
+            "title": "Definition"
+          }
+        },
+        "type": "object",
+        "required": [
+          "term",
+          "definition"
+        ],
+        "title": "TermDefinition"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

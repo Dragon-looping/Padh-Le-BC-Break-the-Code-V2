@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Sparkles, Sliders, RotateCcw, HelpCircle } from 'lucide-react';
 import { ProvenanceBadge } from '@/components/feedback/ProvenanceBadge';
-import { Button } from '@/design-system/primitives';
+import { Button, MathRenderer } from '@/design-system/primitives';
 
 interface Point {
   x: number;
@@ -371,9 +371,9 @@ export function PlaygroundPage() {
               Mathematical Fit
             </h4>
             <div className="p-3 bg-ink-950 border border-graphite-700 space-y-1">
-              <div>Slope ($m$): <span className="text-cyan-400">{olsFit.m.toFixed(4)}</span></div>
-              <div>Intercept ($b$): <span className="text-cyan-400">{olsFit.b.toFixed(2)}</span></div>
-              <div>Coefficient $R^2$: <span className="text-lime-400">{olsFit.r2.toFixed(4)}</span></div>
+              <div className="flex items-center gap-1.5"><MathRenderer text="Slope ($m$):" inline /> <span className="text-cyan-400">{olsFit.m.toFixed(4)}</span></div>
+              <div className="flex items-center gap-1.5"><MathRenderer text="Intercept ($b$):" inline /> <span className="text-cyan-400">{olsFit.b.toFixed(2)}</span></div>
+              <div className="flex items-center gap-1.5"><MathRenderer text="Coefficient $R^2$:" inline /> <span className="text-lime-400">{olsFit.r2.toFixed(4)}</span></div>
             </div>
             <p className="text-[11px] font-sans text-steel-400 leading-relaxed">
               OLS minimizes the sum of squared vertical offsets (the red dashed residuals) between each observed point and the fitted hyperplane.

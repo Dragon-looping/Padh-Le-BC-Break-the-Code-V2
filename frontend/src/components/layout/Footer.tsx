@@ -29,8 +29,6 @@ export function Footer() {
               <li><Link to="/algorithms" className="hover:text-cyan-400 transition-colors">Algorithm Library</Link></li>
               <li><Link to="/playground" className="hover:text-cyan-400 transition-colors">ML Playground</Link></li>
               <li><Link to="/model-lab" className="hover:text-cyan-400 transition-colors">Model Lab</Link></li>
-              <li><Link to="/projects" className="hover:text-cyan-400 transition-colors">Projects (Planned)</Link></li>
-              <li><Link to="/progress" className="hover:text-cyan-400 transition-colors">My Progress</Link></li>
             </ul>
           </div>
 

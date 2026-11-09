@@ -4,7 +4,7 @@ import { ArrowLeft, Cpu, CheckCircle2, Sliders, Check, X, Code2, Calculator, Pla
 import { getAlgorithm } from '@/services/algorithms';
 import { AlgorithmDetail } from '@/types/api';
 import { ConnectionError } from '@/components/feedback/ConnectionError';
-import { CodeBlock, MathBlock, Button, Chip } from '@/design-system/primitives';
+import { CodeBlock, MathBlock, Button, Chip, MathRenderer } from '@/design-system/primitives';
 import { ProvenanceBadge } from '@/components/feedback/ProvenanceBadge';
 
 export function AlgorithmDetailPage() {
@@ -108,7 +108,7 @@ export function AlgorithmDetailPage() {
         </div>
 
         <p className="mt-4 text-base sm:text-lg text-steel-300 font-mono leading-relaxed max-w-3xl">
-          {algo.short_description}
+          <MathRenderer text={algo.short_description} inline />
         </p>
       </header>
 
@@ -121,7 +121,7 @@ export function AlgorithmDetailPage() {
               Core Intuition
             </h2>
             <div className="text-base text-bone-100/95 leading-relaxed bg-graphite-800/25 p-5 border border-graphite-700 rounded-sm">
-              {algo.intuition}
+              <MathRenderer text={algo.intuition} />
             </div>
           </section>
         )}
@@ -151,7 +151,7 @@ export function AlgorithmDetailPage() {
                   <span className="font-mono text-cyan-400 text-xs font-bold shrink-0 mt-0.5">
                     Step {idx + 1}
                   </span>
-                  <span>{step}</span>
+                  <span><MathRenderer text={step} inline /></span>
                 </li>
               ))}
             </ol>
@@ -181,7 +181,7 @@ export function AlgorithmDetailPage() {
                       <td className="p-3 font-bold text-cyan-400">{param.name}</td>
                       <td className="p-3 text-steel-500">{param.type}</td>
                       <td className="p-3 text-bone-100">{String(param.default)}</td>
-                      <td className="p-3 text-steel-400 font-sans">{param.description}</td>
+                      <td className="p-3 text-steel-400 font-sans"><MathRenderer text={param.description} inline /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -200,7 +200,7 @@ export function AlgorithmDetailPage() {
             <CodeBlock code={algo.python_snippet} language="python" filename={`${algo.id}.py`} />
             {algo.code_explanation && (
               <p className="text-xs text-steel-400 leading-relaxed font-sans">
-                {algo.code_explanation}
+                <MathRenderer text={algo.code_explanation} />
               </p>
             )}
           </section>
@@ -218,7 +218,7 @@ export function AlgorithmDetailPage() {
                 {algo.advantages.map((adv, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-lime-400 font-mono mt-0.5">+</span>
-                    <span>{adv}</span>
+                    <span><MathRenderer text={adv} inline /></span>
                   </li>
                 ))}
               </ul>
@@ -235,7 +235,7 @@ export function AlgorithmDetailPage() {
                 {algo.limitations.map((lim, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-coral-500 font-mono mt-0.5">-</span>
-                    <span>{lim}</span>
+                    <span><MathRenderer text={lim} inline /></span>
                   </li>
                 ))}
               </ul>
@@ -252,7 +252,7 @@ export function AlgorithmDetailPage() {
               </h3>
               <ul className="list-disc pl-4 space-y-1 text-xs text-bone-100/90 font-sans">
                 {algo.when_to_use.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <li key={i}><MathRenderer text={item} inline /></li>
                 ))}
               </ul>
             </div>
@@ -265,7 +265,7 @@ export function AlgorithmDetailPage() {
               </h3>
               <ul className="list-disc pl-4 space-y-1 text-xs text-bone-100/90 font-sans">
                 {algo.when_to_avoid.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <li key={i}><MathRenderer text={item} inline /></li>
                 ))}
               </ul>
             </div>

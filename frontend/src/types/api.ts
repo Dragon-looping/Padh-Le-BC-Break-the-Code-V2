@@ -241,6 +241,27 @@ export interface DatasetListResponse {
   datasets: DatasetSummary[];
 }
 
+export interface SampleDatasetInfo {
+  id: string;
+  display_name: string;
+  description: string;
+  filename: string;
+  row_count: number;
+  feature_count: number;
+  target_column: string;
+  task_type: string;
+  difficulty: string;
+  available_algorithms: string[];
+  educational_objectives: string[];
+  disclaimer?: string | null;
+}
+
+export interface SampleDatasetListResponse {
+  total: number;
+  samples: SampleDatasetInfo[];
+}
+
+
 // Models & Recommendations
 export interface ModelInfo {
   id: string;

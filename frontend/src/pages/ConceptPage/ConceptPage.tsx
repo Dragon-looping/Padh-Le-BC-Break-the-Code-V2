@@ -4,7 +4,7 @@ import { ArrowLeft, Lightbulb, AlertTriangle, Layers, BookOpen } from 'lucide-re
 import { getConcept } from '@/services/concepts';
 import { ConceptDetail } from '@/types/api';
 import { ConnectionError } from '@/components/feedback/ConnectionError';
-import { Callout, Chip } from '@/design-system/primitives';
+import { Callout, Chip, MathRenderer } from '@/design-system/primitives';
 
 export function ConceptPage() {
   const { conceptId } = useParams<{ conceptId: string }>();
@@ -79,7 +79,7 @@ export function ConceptPage() {
           {concept.title}
         </h1>
         <p className="mt-3 text-base sm:text-lg text-cyan-300/90 font-mono">
-          {concept.short_definition}
+          <MathRenderer text={concept.short_definition} inline />
         </p>
       </header>
 
@@ -91,7 +91,7 @@ export function ConceptPage() {
             <span>Explanation</span>
           </h2>
           <p className="text-base text-bone-100/95 leading-relaxed">
-            {concept.simple_explanation}
+            <MathRenderer text={concept.simple_explanation} />
           </p>
         </section>
 
@@ -102,7 +102,7 @@ export function ConceptPage() {
             <span>Practical Example</span>
           </h2>
           <div className="p-4 border-l-2 border-lime-400 bg-graphite-800/30 text-sm text-bone-100/90">
-            {concept.real_world_example}
+            <MathRenderer text={concept.real_world_example} />
           </div>
         </section>
 
@@ -117,7 +117,7 @@ export function ConceptPage() {
               {concept.key_points.map((pt, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm p-3 border border-graphite-700/60 bg-graphite-800/20">
                   <span className="text-cyan-400 font-mono text-xs mt-0.5">•</span>
-                  <span>{pt}</span>
+                  <span><MathRenderer text={pt} inline /></span>
                 </li>
               ))}
             </ul>
@@ -129,7 +129,7 @@ export function ConceptPage() {
           <Callout variant="warning" title="Watch Out: Common Mistakes">
             <ul className="list-disc pl-4 space-y-1 text-sm">
               {concept.common_mistakes.map((cm, i) => (
-                <li key={i}>{cm}</li>
+                <li key={i}><MathRenderer text={cm} inline /></li>
               ))}
             </ul>
           </Callout>

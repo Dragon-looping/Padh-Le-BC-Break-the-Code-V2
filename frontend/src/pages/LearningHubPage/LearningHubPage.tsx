@@ -78,12 +78,9 @@ export function LearningHubPage() {
                 <span className="font-semibold text-bone-100">{lessonsData?.total_lessons || 11}</span> lessons completed
               </div>
             </div>
-            <Link
-              to="/progress"
-              className="text-xs font-mono text-lime-400 hover:text-lime-300 underline underline-offset-4"
-            >
-              View Progress Ledger →
-            </Link>
+            <span className="text-xs font-mono text-lime-400 font-medium">
+              Active Session
+            </span>
           </div>
         )}
 

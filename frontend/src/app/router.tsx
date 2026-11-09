@@ -13,8 +13,6 @@ const PlaygroundPage = lazy(() => import('@/pages/PlaygroundPage/PlaygroundPage'
 const ModelLabPage = lazy(() => import('@/pages/ModelLabPage/ModelLabPage').then((m) => ({ default: m.ModelLabPage })));
 const DatasetProfilePage = lazy(() => import('@/pages/DatasetProfilePage/DatasetProfilePage').then((m) => ({ default: m.DatasetProfilePage })));
 const ExperimentResultsPage = lazy(() => import('@/pages/ExperimentResultsPage/ExperimentResultsPage').then((m) => ({ default: m.ExperimentResultsPage })));
-const ProjectsPage = lazy(() => import('@/pages/ProjectsPage/ProjectsPage').then((m) => ({ default: m.ProjectsPage })));
-const ProgressPage = lazy(() => import('@/pages/ProgressPage/ProgressPage').then((m) => ({ default: m.ProgressPage })));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 
 function RouteFallback() {
@@ -120,19 +118,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'projects',
-        element: (
-          <Suspense fallback={<RouteFallback />}>
-            <ProjectsPage />
-          </Suspense>
-        ),
+        element: <Navigate to="/model-lab" replace />,
       },
       {
         path: 'progress',
-        element: (
-          <Suspense fallback={<RouteFallback />}>
-            <ProgressPage />
-          </Suspense>
-        ),
+        element: <Navigate to="/model-lab" replace />,
       },
       {
         path: '*',

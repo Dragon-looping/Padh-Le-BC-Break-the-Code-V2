@@ -1,42 +1,115 @@
 import { describe, it, expect } from 'vitest';
+import {
+  calculateEuclideanDistance,
+  computeKnn,
+  calculateOls,
+  KnnPoint,
+} from './simulationMath';
 
-function calculateEuclideanDistance(p1: { x: number; y: number }, p2: { x: number; y: number }) {
-  const dx = p1.x - p2.x;
-  const dy = p1.y - p2.y;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
-function calculateOls(points: Array<{ x: number; y: number }>) {
-  const n = points.length;
-  if (n < 2) return { m: 0, b: 0 };
-  let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-  points.forEach((p) => {
-    sumX += p.x;
-    sumY += p.y;
-    sumXY += p.x * p.y;
-    sumXX += p.x * p.x;
-  });
-  const m = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-  const b = (sumY - m * sumX) / n;
-  return { m, b };
-}
-
-describe('Simulation Maths', () => {
-  it('computes exact Euclidean distance in 2D plane', () => {
+describe('Simulation Maths & KNN Engine', () => {
+  it('computes exact Euclidean distance in 2D plane (3-4-5 triangle)', () => {
     const d = calculateEuclideanDistance({ x: 0, y: 0 }, { x: 3, y: 4 });
     expect(d).toBe(5);
   });
 
-  it('computes Ordinary Least Squares slope and intercept', () => {
-    // Points along y = 2x + 1
+  it('computes Euclidean distance for coincident points as zero', () => {
+    const d = calculateEuclideanDistance({ x: 120, y: 80 }, { x: 120, y: 80 });
+    expect(d).toBe(0);
+  });
+
+  const samplePoints: KnnPoint[] = [
+    { x: 10, y: 10, label: 0 }, // d to (12, 10) = 2
+    { x: 15, y: 10, label: 0 }, // d to (12, 10) = 3
+    { x: 25, y: 10, label: 1 }, // d to (12, 10) = 13
+    { x: 30, y: 10, label: 1 }, // d to (12, 10) = 18
+  ];
+
+  it('selects exactly K nearest neighbors and sorts by distance', () => {
+    const result = computeKnn({
+      trainingPoints: samplePoints,
+      queryPoint: { x: 12, y: 10 },
+      k: 3,
+    });
+
+    expect(result.nearestNeighbors).toHaveLength(3);
+    expect(result.nearestNeighbors[0].x).toBe(10);
+    expect(result.nearestNeighbors[0].distance).toBe(2);
+    expect(result.nearestNeighbors[1].x).toBe(15);
+    expect(result.nearestNeighbors[1].distance).toBe(3);
+    expect(result.nearestNeighbors[2].x).toBe(25);
+    expect(result.nearestNeighbors[2].distance).toBe(13);
+  });
+
+  it('predicts winning class via majority voting', () => {
+    const result = computeKnn({
+      trainingPoints: samplePoints,
+      queryPoint: { x: 12, y: 10 },
+      k: 3,
+    });
+
+    // 2 votes for Class 0, 1 vote for Class 1 -> Winner: Class 0
+    expect(result.voteCounts[0]).toBe(2);
+    expect(result.voteCounts[1]).toBe(1);
+    expect(result.predictedLabel).toBe(0);
+    expect(result.isTie).toBe(false);
+  });
+
+  it('never allows K to exceed available training points', () => {
+    const result = computeKnn({
+      trainingPoints: samplePoints, // 4 points
+      queryPoint: { x: 0, y: 0 },
+      k: 50, // oversized K
+    });
+
+    expect(result.kUsed).toBe(4);
+    expect(result.nearestNeighbors).toHaveLength(4);
+  });
+
+  it('clamps K to minimum of 1', () => {
+    const result = computeKnn({
+      trainingPoints: samplePoints,
+      queryPoint: { x: 0, y: 0 },
+      k: 0, // invalid K
+    });
+
+    expect(result.kUsed).toBe(1);
+    expect(result.nearestNeighbors).toHaveLength(1);
+  });
+
+  it('handles vote ties deterministically using closest neighbor distance', () => {
+    // 2 points for class 0, 2 points for class 1 with equal votes when K=2
+    const tiePoints: KnnPoint[] = [
+      { x: 5, y: 0, label: 0 },  // distance to (0,0) = 5
+      { x: 10, y: 0, label: 1 }, // distance to (0,0) = 10
+      { x: 50, y: 0, label: 0 },
+      { x: 60, y: 0, label: 1 },
+    ];
+
+    const result = computeKnn({
+      trainingPoints: tiePoints,
+      queryPoint: { x: 0, y: 0 },
+      k: 2, // 1 vote for class 0 (dist 5), 1 vote for class 1 (dist 10)
+    });
+
+    expect(result.voteCounts[0]).toBe(1);
+    expect(result.voteCounts[1]).toBe(1);
+    expect(result.isTie).toBe(true);
+    // Class 0 wins because its nearest neighbor (dist 5) is closer than class 1 (dist 10)
+    expect(result.predictedLabel).toBe(0);
+    expect(result.tieBreakReason).toContain('broken deterministically');
+  });
+
+  it('computes Ordinary Least Squares slope, intercept and R2', () => {
+    // Exact line: y = 2x + 1
     const points = [
       { x: 1, y: 3 },
       { x: 2, y: 5 },
       { x: 3, y: 7 },
       { x: 4, y: 9 },
     ];
-    const { m, b } = calculateOls(points);
+    const { m, b, r2 } = calculateOls(points);
     expect(m).toBeCloseTo(2);
     expect(b).toBeCloseTo(1);
+    expect(r2).toBeCloseTo(1);
   });
 });

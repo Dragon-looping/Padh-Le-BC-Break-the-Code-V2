@@ -5,7 +5,7 @@ import { getLesson } from '@/services/lessons';
 import { completeLesson, getProgress } from '@/services/progress';
 import { LessonDetail, QuizQuestion } from '@/types/api';
 import { ConnectionError } from '@/components/feedback/ConnectionError';
-import { CodeBlock, MathBlock, Button, Callout } from '@/design-system/primitives';
+import { CodeBlock, MathBlock, Button, Callout, MathRenderer } from '@/design-system/primitives';
 
 export function LessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -131,7 +131,7 @@ export function LessonPage() {
               {lesson.learning_objectives.map((obj, i) => (
                 <li key={i} className="flex items-start gap-2.5">
                   <span className="text-lime-400 font-mono text-xs mt-1">0{i + 1}.</span>
-                  <span>{obj}</span>
+                  <span><MathRenderer text={obj} inline /></span>
                 </li>
               ))}
             </ul>
@@ -145,7 +145,7 @@ export function LessonPage() {
               Intuition & Concept
             </h2>
             <div className="text-base text-bone-100/95 leading-relaxed font-sans whitespace-pre-line">
-              {lesson.explanation}
+              <MathRenderer text={lesson.explanation} />
             </div>
           </section>
         )}
@@ -160,10 +160,10 @@ export function LessonPage() {
               {lesson.definitions.map((def, i) => (
                 <div key={i} className="p-4 border border-graphite-700 bg-graphite-800/40 rounded-sm">
                   <div className="font-mono text-sm font-semibold text-lime-400 mb-1">
-                    {def.term}
+                    <MathRenderer text={def.term} inline />
                   </div>
                   <div className="text-xs text-steel-400 leading-relaxed">
-                    {def.definition}
+                    <MathRenderer text={def.definition} />
                   </div>
                 </div>
               ))}
@@ -179,7 +179,7 @@ export function LessonPage() {
               <span>Mathematical Formulation</span>
             </h2>
             <div className="p-4 border border-graphite-700 bg-ink-900 rounded-sm">
-              <MathBlock math={lesson.mathematical_explanation} displayMode={true} />
+              <MathRenderer text={lesson.mathematical_explanation} />
             </div>
           </section>
         )}
@@ -191,7 +191,7 @@ export function LessonPage() {
               Real-World Application
             </h2>
             <div className="p-4 border-l-2 border-lime-400 bg-graphite-800/30 text-sm leading-relaxed text-bone-100/90 font-sans">
-              {lesson.real_world_example}
+              <MathRenderer text={lesson.real_world_example} />
             </div>
           </section>
         )}
@@ -208,7 +208,7 @@ export function LessonPage() {
                   <span className="font-mono text-lime-400 text-xs font-bold shrink-0 mt-0.5">
                     Step {idx + 1}
                   </span>
-                  <span>{step}</span>
+                  <span><MathRenderer text={step} inline /></span>
                 </li>
               ))}
             </ol>
@@ -225,7 +225,7 @@ export function LessonPage() {
             <CodeBlock code={lesson.python_code} language="python" filename="lesson_solution.py" />
             {lesson.code_explanation && (
               <p className="text-xs text-steel-400 leading-relaxed font-sans">
-                {lesson.code_explanation}
+                <MathRenderer text={lesson.code_explanation} />
               </p>
             )}
           </section>
@@ -236,7 +236,7 @@ export function LessonPage() {
           <Callout variant="warning" title="Common Pitfalls & Mistakes">
             <ul className="list-disc pl-4 space-y-1">
               {lesson.common_mistakes.map((m, i) => (
-                <li key={i}>{m}</li>
+                <li key={i}><MathRenderer text={m} inline /></li>
               ))}
             </ul>
           </Callout>
@@ -280,7 +280,7 @@ export function LessonPage() {
                   <div key={q.id} className="p-5 border border-graphite-700 bg-graphite-800/30 rounded-sm space-y-4">
                     <div className="font-semibold text-sm sm:text-base text-bone-100">
                       <span className="font-mono text-xs text-lime-400 mr-2">Q{qIdx + 1}.</span>
-                      {q.question}
+                      <MathRenderer text={q.question} inline />
                     </div>
 
                     <div className="space-y-2">
@@ -305,7 +305,7 @@ export function LessonPage() {
                             onClick={() => handleSelectQuizOption(q.id, opt.id)}
                             className={`w-full p-3 text-left text-xs sm:text-sm font-mono border transition-all flex items-center justify-between rounded-sm ${optionStyle}`}
                           >
-                            <span>{opt.text}</span>
+                            <span><MathRenderer text={opt.text} inline /></span>
                             {submitted && opt.id === q.correct_option_id && (
                               <Check className="w-4 h-4 text-lime-400 shrink-0" />
                             )}
@@ -333,7 +333,7 @@ export function LessonPage() {
                         <div className="font-mono font-bold uppercase mb-1">
                           {isCorrect ? 'Correct!' : 'Incorrect'}
                         </div>
-                        <p>{q.explanation}</p>
+                        <MathRenderer text={q.explanation} />
                       </div>
                     )}
                   </div>

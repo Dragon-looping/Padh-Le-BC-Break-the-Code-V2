@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { clsx } from 'clsx';
 import { Check, Copy } from 'lucide-react';
-import katex from 'katex';
 import 'katex/dist/katex.min.css';
+import { MathRenderer } from '../components/common/MathRenderer';
+export { MathRenderer } from '../components/common/MathRenderer';
 
 // ---------------- Button ----------------
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -133,26 +134,7 @@ export function CodeBlock({ code, language = 'python', filename }: { code: strin
 
 // ---------------- MathBlock (KaTeX) ----------------
 export function MathBlock({ math, displayMode = true }: { math: string; displayMode?: boolean }) {
-  const html = React.useMemo(() => {
-    try {
-      return katex.renderToString(math, {
-        displayMode,
-        throwOnError: false,
-      });
-    } catch {
-      return math;
-    }
-  }, [math, displayMode]);
-
-  return (
-    <div
-      className={clsx(
-        'font-mono overflow-x-auto py-2',
-        displayMode ? 'text-center my-4 p-4 border border-graphite-700/50 bg-graphite-800/20 rounded' : 'inline-block'
-      )}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
+  return <MathRenderer text={math} block={displayMode} />;
 }
 
 // ---------------- Callout ----------------

@@ -312,6 +312,99 @@ export function ExperimentResultsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* ---------------- BEGINNER METRIC GLOSSARY & TRADEOFF GUIDE ---------------- */}
+        <div className="p-6 border border-graphite-700 bg-graphite-850/30 rounded-sm space-y-4">
+          <div className="flex items-center gap-2">
+            <Info className="w-4 h-4 text-cyan-400" />
+            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-bone-100">
+              Beginner Guide: Understanding Evaluation Metrics & Model Selection
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 font-sans text-xs">
+            {isClassification ? (
+              <>
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-cyan-400 font-bold">Accuracy</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    Percentage of all predictions that were completely correct.
+                  </p>
+                  <p className="text-amber-400/90 text-[10px] font-mono">
+                    Caution: High accuracy can be misleading if one class dominates!
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-lime-400 font-bold">Precision</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    When the model predicts a class, how often is it actually right? High precision avoids costly false alarms.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-lime-400 font-bold">Recall (Sensitivity)</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    Out of all real positive cases, how many did the model find? Crucial when missing a positive is hazardous.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-bone-100 font-bold">F1-Score (Macro)</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    The harmonic balance between Precision and Recall. Favored over raw accuracy for balanced decision-making.
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-cyan-400 font-bold">R² Score (Variance)</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    Proportion of target variance captured by the model. 1.0 is a perfect fit; 0 means predicting the average.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-bone-100 font-bold">MAE (Absolute Error)</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    Average absolute distance between predictions and actual values, expressed directly in target units.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-bone-100 font-bold">RMSE (Root Squared Error)</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    Square root of mean squared error. Penalizes occasional large errors more severely than MAE.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-ink-950 border border-graphite-800 rounded-sm space-y-1">
+                  <div className="font-mono text-steel-400 font-bold">Training Duration</div>
+                  <p className="text-steel-400 leading-relaxed text-[11px]">
+                    Time taken by the backend scikit-learn engine to fit the model. Simpler models train in milliseconds.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Contextual Clinical Note for Breast Cancer Dataset */}
+          {isClassification &&
+            (experiment.target_column.toLowerCase().includes('diag') ||
+              experiment.results.some((r) =>
+                r.metrics.classes?.some((c) => c.toLowerCase().includes('malignant'))
+              )) && (
+              <div className="p-4 bg-ink-950 border-l-4 border-l-amber-400 border border-graphite-800 rounded-sm space-y-1">
+                <div className="font-mono text-xs text-amber-400 font-bold uppercase tracking-wider">
+                  Educational Case Study: Why Recall & False Negatives Matter in Breast Cancer Classification
+                </div>
+                <p className="text-steel-300 font-sans text-xs leading-relaxed">
+                  In diagnostic tasks like the Wisconsin Breast Cancer benchmark, a <strong>False Negative</strong> (classifying a malignant tumor as benign) can cause life-threatening delays in treatment. A <strong>False Positive</strong> (classifying benign tissue as malignant) triggers anxiety and follow-up biopsy, but is quickly caught. Therefore, machine learning practitioners prioritize models with <strong>High Recall</strong> on the Malignant class over models that simply achieve high overall accuracy by defaulting to the majority benign class.
+                </p>
+              </div>
+            )}
+        </div>
       </section>
 
       {/* ---------------- ACTIVE MODEL DETAILED INSPECTOR ---------------- */}

@@ -19,6 +19,8 @@ import {
   getDatasetProfile,
   configureDataset,
   getDatasets,
+  getSampleDatasets,
+  loadSampleDataset,
 } from '@/services/datasets';
 import { getModels, recommendModels } from '@/services/models';
 import { createExperiment } from '@/services/experiments';
@@ -27,6 +29,7 @@ import {
   DatasetConfigureResponse,
   ModelInfo,
   ModelRecommendationResponse,
+  SampleDatasetInfo,
   AppError,
 } from '@/types/api';
 import { Button, Chip, Callout } from '@/design-system/primitives';
@@ -42,6 +45,12 @@ export function ModelLabPage() {
 
   // Stepper state (1: Upload, 2: Profile & Target, 3: Models & Config, 4: Running)
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+
+  // Sample datasets state
+  const [sampleDatasets, setSampleDatasets] = useState<SampleDatasetInfo[]>([]);
+  const [loadingSamples, setLoadingSamples] = useState(false);
+  const [loadingSampleId, setLoadingSampleId] = useState<string | null>(null);
+  const [sampleLoadError, setSampleLoadError] = useState<string | null>(null);
 
   // Upload state
   const [file, setFile] = useState<File | null>(null);
@@ -80,6 +89,39 @@ export function ModelLabPage() {
   const [experimentRunning, setExperimentRunning] = useState(false);
   const [experimentError, setExperimentError] = useState<AppError | null>(null);
   const [runStatusText, setRunStatusText] = useState<string>('Initializing experiment pipeline...');
+
+  // Load sample datasets catalog on mount
+  useEffect(() => {
+    let mounted = true;
+    setLoadingSamples(true);
+    getSampleDatasets()
+      .then((res) => {
+        if (mounted) setSampleDatasets(res.samples);
+      })
+      .catch((err) => {
+        console.warn('Failed to load sample datasets catalog:', err);
+      })
+      .finally(() => {
+        if (mounted) setLoadingSamples(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleSelectSample = async (sample: SampleDatasetInfo) => {
+    setLoadingSampleId(sample.id);
+    setSampleLoadError(null);
+    try {
+      const res = await loadSampleDataset(sample.id);
+      setSelectedTarget(sample.target_column);
+      setTaskType(sample.task_type);
+      setDatasetId(res.dataset_id);
+    } catch (err: any) {
+      setSampleLoadError(err.message || 'Failed to load sample dataset.');
+      setLoadingSampleId(null);
+    }
+  };
 
   // Sync datasetId with URL query params
   useEffect(() => {
@@ -302,7 +344,7 @@ export function ModelLabPage() {
         {/* 4-Step Monospace Breadcrumb Indicator */}
         <div className="mt-8 grid grid-cols-4 gap-2 font-mono text-xs">
           {[
-            { s: 1, label: '01. UPLOAD CSV' },
+            { s: 1, label: '01. CHOOSE DATASET' },
             { s: 2, label: '02. PROFILE & TARGET' },
             { s: 3, label: '03. CONFIGURE MODELS' },
             { s: 4, label: '04. RUN EXPERIMENT' },
@@ -325,93 +367,233 @@ export function ModelLabPage() {
         </div>
       </div>
 
-      {/* ---------------- STEP 1: DATASET UPLOAD ---------------- */}
+      {/* ---------------- STEP 1: CHOOSE DATASET ---------------- */}
       {step === 1 && (
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="chamfer-panel p-8 border border-graphite-700 bg-graphite-800/30">
-            <h2 className="text-base font-mono uppercase tracking-wider text-bone-100 font-bold mb-2">
-              Step 1: Upload CSV Dataset
-            </h2>
-            <p className="text-xs text-steel-400 font-sans leading-relaxed mb-6">
-              Drag and drop your dataset file or browse locally. Validated against size limits (15 MB),
-              row limits (100,000), and duplicate headers.
-            </p>
+        <div className="space-y-12">
+          {sampleLoadError && (
+            <Callout variant="warning" title="Sample Dataset Error">
+              {sampleLoadError}
+            </Callout>
+          )}
 
-            {/* Drag & Drop Zone */}
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                const dropped = e.dataTransfer.files[0];
-                if (dropped) {
-                  const ev = { target: { files: [dropped] } } as any;
-                  handleFileChange(ev);
-                }
-              }}
-              onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-graphite-600 hover:border-cyan-400 bg-ink-950/60 p-10 text-center cursor-pointer transition-colors group"
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".csv"
-                onChange={handleFileChange}
-                className="hidden"
-                aria-label="Upload CSV file"
-              />
-              <div className="inline-flex p-3 bg-graphite-800 border border-graphite-700 text-steel-400 group-hover:text-cyan-400 mb-3 rounded-sm">
-                <Upload className="w-6 h-6" />
+          {/* OPTION A: EXPLORE WITH SAMPLE DATASETS */}
+          <div className="space-y-6">
+            <div className="border-b border-graphite-700/80 pb-4">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span className="font-mono text-xs uppercase tracking-wider text-cyan-400 font-bold">
+                  Option A · Recommended for Beginners
+                </span>
               </div>
-              <div className="font-mono text-sm text-bone-100 font-semibold group-hover:text-cyan-400 transition-colors">
-                {file ? file.name : 'Select or drop CSV file'}
-              </div>
-              <div className="text-xs font-mono text-steel-500 mt-1">
-                {file ? formatBytes(file.size) : 'Max 15MB · UTF-8 comma-separated values'}
-              </div>
+              <h2 className="text-xl sm:text-2xl font-display font-bold text-bone-100">
+                Explore with Sample Datasets
+              </h2>
+              <p className="text-xs sm:text-sm text-steel-400 font-sans mt-1 max-w-3xl leading-relaxed">
+                Start experimenting immediately with standard machine learning benchmarks. No CSV upload or manual cleaning required. Selecting a dataset automatically loads and profiles it on the backend.
+              </p>
             </div>
 
-            {/* Upload Progress Bar if running */}
-            {uploadProgress !== null && uploadProgress > 0 && uploadProgress < 100 && (
-              <div className="mt-4 space-y-1">
-                <div className="flex justify-between text-xs font-mono text-steel-400">
-                  <span>Uploading to server...</span>
-                  <span>{uploadProgress}%</span>
-                </div>
-                <div
-                  className="w-full bg-graphite-700 h-1.5 overflow-hidden rounded-full"
-                  role="progressbar"
-                  aria-valuenow={uploadProgress}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                >
-                  <div
-                    className="bg-cyan-400 h-full transition-all duration-150"
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
+            {loadingSamples ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+                <div className="h-64 bg-graphite-800/40 border border-graphite-700/50 rounded-sm" />
+                <div className="h-64 bg-graphite-800/40 border border-graphite-700/50 rounded-sm" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {sampleDatasets.map((sample) => {
+                  const isLoadingThis = loadingSampleId === sample.id;
+                  const isClassification = sample.task_type === 'classification';
+
+                  return (
+                    <div
+                      key={sample.id}
+                      className="p-6 border border-graphite-700 bg-graphite-850/40 hover:border-graphite-600 rounded-sm flex flex-col justify-between space-y-5 transition-all shadow-sm"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-2">
+                            <Chip variant={isClassification ? 'lime' : 'cyan'}>
+                              {sample.task_type}
+                            </Chip>
+                            <Chip variant="default">
+                              {sample.difficulty}
+                            </Chip>
+                          </div>
+                          <span className="text-[11px] font-mono text-steel-500">
+                            {sample.row_count} rows · {sample.feature_count} features
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg font-display font-bold text-bone-100">
+                          {sample.display_name}
+                        </h3>
+
+                        <p className="text-xs text-steel-300 font-sans leading-relaxed">
+                          {sample.description}
+                        </p>
+
+                        <div className="pt-2 border-t border-graphite-700/60 font-mono text-xs space-y-1">
+                          <div className="text-steel-400">
+                            Target Column:{' '}
+                            <span className="text-cyan-400 font-bold">{sample.target_column}</span>
+                          </div>
+                          <div className="text-steel-400">
+                            Features:{' '}
+                            <span className="text-bone-100">{sample.feature_count} numerical dimensions</span>
+                          </div>
+                        </div>
+
+                        {/* Educational Objectives */}
+                        {sample.educational_objectives && sample.educational_objectives.length > 0 && (
+                          <div className="space-y-1 pt-1 font-sans text-xs">
+                            <span className="font-mono text-[10px] uppercase tracking-wider text-steel-500 font-bold block">
+                              Learning Objectives
+                            </span>
+                            <ul className="space-y-1 text-steel-400">
+                              {sample.educational_objectives.slice(0, 3).map((obj, i) => (
+                                <li key={i} className="flex items-start gap-1.5 text-[11px]">
+                                  <span className="text-cyan-400 shrink-0">•</span>
+                                  <span>{obj}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Medical / Public Disclaimer if present */}
+                        {sample.disclaimer && (
+                          <div className="p-2.5 bg-ink-950 border border-graphite-800 rounded-sm text-[10px] text-amber-400/90 font-mono leading-relaxed">
+                            <strong>Note: </strong> {sample.disclaimer}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="pt-4 border-t border-graphite-700/60 flex items-center justify-between">
+                        <span className="text-xs font-mono text-steel-500">
+                          Ready to profile & train
+                        </span>
+                        <Button
+                          variant={isClassification ? 'lime-solid' : 'cyan-solid'}
+                          size="sm"
+                          disabled={loadingSampleId !== null}
+                          isLoading={isLoadingThis}
+                          onClick={() => handleSelectSample(sample)}
+                          className="gap-1.5 text-xs"
+                        >
+                          <span>Explore Dataset</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
+          </div>
 
-            {/* Error Message */}
-            {uploadError && (
-              <div className="mt-4">
-                <Callout variant="warning" title={`Error: ${uploadError.code}`}>
-                  {uploadError.message}
-                </Callout>
+          {/* DIVIDER */}
+          <div className="relative flex items-center justify-center py-2">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-graphite-700" />
+            </div>
+            <div className="relative px-4 bg-ink-950 font-mono text-xs text-steel-500 uppercase tracking-widest">
+              — OR UPLOAD YOUR OWN CSV —
+            </div>
+          </div>
+
+          {/* OPTION B: UPLOAD YOUR OWN DATASET */}
+          <div className="max-w-2xl mx-auto space-y-6">
+            <div className="chamfer-panel p-8 border border-graphite-700 bg-graphite-800/30 rounded-sm">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Upload className="w-4 h-4 text-steel-400" />
+                <span className="font-mono text-xs uppercase tracking-wider text-steel-400 font-bold">
+                  Option B · Custom Dataset
+                </span>
               </div>
-            )}
+              <h3 className="text-base font-mono uppercase tracking-wider text-bone-100 font-bold mb-2">
+                Upload Custom CSV Dataset
+              </h3>
+              <p className="text-xs text-steel-400 font-sans leading-relaxed mb-6">
+                CSV upload is optional. If you have your own data file, drag and drop it here.
+                Validated against file size limits (15 MB), maximum rows (100,000), and duplicate headers.
+              </p>
 
-            <div className="mt-6 flex justify-end">
-              <Button
-                variant="cyan-solid"
-                disabled={!file || uploading}
-                isLoading={uploading}
-                onClick={handleUploadSubmit}
-                className="gap-2"
+              {/* Drag & Drop Zone */}
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const dropped = e.dataTransfer.files[0];
+                  if (dropped) {
+                    const ev = { target: { files: [dropped] } } as any;
+                    handleFileChange(ev);
+                  }
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed border-graphite-600 hover:border-cyan-400 bg-ink-950/60 p-10 text-center cursor-pointer transition-colors group rounded-sm"
               >
-                <span>Upload & Profile Dataset</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  aria-label="Upload CSV file"
+                />
+                <div className="inline-flex p-3 bg-graphite-800 border border-graphite-700 text-steel-400 group-hover:text-cyan-400 mb-3 rounded-sm">
+                  <Upload className="w-6 h-6" />
+                </div>
+                <div className="font-mono text-sm text-bone-100 font-semibold group-hover:text-cyan-400 transition-colors">
+                  {file ? file.name : 'Select or drop CSV file'}
+                </div>
+                <div className="text-xs font-mono text-steel-500 mt-1">
+                  {file ? formatBytes(file.size) : 'Max 15MB · UTF-8 comma-separated values'}
+                </div>
+              </div>
+
+              {/* Upload Progress Bar if running */}
+              {uploadProgress !== null && uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="mt-4 space-y-1">
+                  <div className="flex justify-between text-xs font-mono text-steel-400">
+                    <span>Uploading to server...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <div
+                    className="w-full bg-graphite-700 h-1.5 overflow-hidden rounded-full"
+                    role="progressbar"
+                    aria-valuenow={uploadProgress}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
+                    <div
+                      className="bg-cyan-400 h-full transition-all duration-150"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {uploadError && (
+                <div className="mt-4">
+                  <Callout variant="warning" title={`Error: ${uploadError.code}`}>
+                    {uploadError.message}
+                  </Callout>
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-end">
+                <Button
+                  variant="cyan-solid"
+                  disabled={!file || uploading}
+                  isLoading={uploading}
+                  onClick={handleUploadSubmit}
+                  className="gap-2"
+                >
+                  <span>Upload & Profile Dataset</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

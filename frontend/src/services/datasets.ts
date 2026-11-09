@@ -6,6 +6,7 @@ import {
   DatasetProfileResponse,
   DatasetSummary,
   DatasetUploadResponse,
+  SampleDatasetListResponse,
 } from '@/types/api';
 
 export async function uploadDataset(
@@ -96,6 +97,39 @@ export async function configureDataset(
     const res = await apiClient.post<DatasetConfigureResponse>(
       `/datasets/${encodeURIComponent(datasetId)}/configure`,
       payload,
+      { signal }
+    );
+    return res.data;
+  } catch (err) {
+    throw normaliseApiError(err);
+  }
+}
+
+
+export async function getSampleDatasets(
+  signal?: AbortSignal
+): Promise<SampleDatasetListResponse> {
+  return fetchWithRetry(
+    async (s) => {
+      const res = await apiClient.get<SampleDatasetListResponse>('/datasets/samples', {
+        signal: s,
+      });
+      return res.data;
+    },
+    2,
+    800,
+    signal
+  );
+}
+
+export async function loadSampleDataset(
+  sampleId: string,
+  signal?: AbortSignal
+): Promise<DatasetUploadResponse> {
+  try {
+    const res = await apiClient.post<DatasetUploadResponse>(
+      `/datasets/samples/${encodeURIComponent(sampleId)}/load`,
+      {},
       { signal }
     );
     return res.data;

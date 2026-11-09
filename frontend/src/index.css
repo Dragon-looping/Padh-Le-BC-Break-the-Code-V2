@@ -1,6 +1,7 @@
 @import '@fontsource/bricolage-grotesque';
 @import '@fontsource/instrument-sans';
 @import '@fontsource/jetbrains-mono';
+@import 'katex/dist/katex.min.css';
 @import './design-system/tokens.css';
 
 @tailwind base;

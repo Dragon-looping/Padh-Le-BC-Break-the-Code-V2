@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Menu, X, Activity } from 'lucide-react';
+import { NavLink, useLocation, Link } from 'react-router-dom';
+import { Menu, X, Database } from 'lucide-react';
 import { KineticWordmark } from '@/components/navigation/KineticWordmark';
-import { StatusDot } from '@/design-system/primitives';
-import { checkHealth } from '@/services/health';
+import { Button } from '@/design-system/primitives';
 
 const NAV_ITEMS = [
   { name: 'Home', path: '/' },
@@ -11,34 +10,11 @@ const NAV_ITEMS = [
   { name: 'Algorithm Library', path: '/algorithms' },
   { name: 'ML Playground', path: '/playground' },
   { name: 'Model Lab', path: '/model-lab' },
-  { name: 'Projects', path: '/projects' },
-  { name: 'My Progress', path: '/progress' },
 ];
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [backendStatus, setBackendStatus] = useState<'healthy' | 'unreachable' | 'running'>('running');
   const location = useLocation();
-
-  const verifyHealth = async () => {
-    try {
-      const data = await checkHealth();
-      if (data.status === 'healthy') {
-        setBackendStatus('healthy');
-      } else {
-        setBackendStatus('unreachable');
-      }
-    } catch {
-      setBackendStatus('unreachable');
-    }
-  };
-
-  useEffect(() => {
-    verifyHealth();
-    const onFocus = () => verifyHealth();
-    window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
-  }, []);
 
   // Close mobile nav on escape
   useEffect(() => {
@@ -81,25 +57,14 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Backend Status Pill (Real GET /health status) */}
-          <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-graphite-700">
-            <div
-              className="flex items-center gap-2 px-2.5 py-1 text-xs font-mono border border-graphite-700 bg-graphite-850/60 rounded-full"
-              title={
-                backendStatus === 'healthy'
-                  ? 'FastAPI backend connected'
-                  : 'FastAPI backend unreachable'
-              }
-            >
-              <StatusDot status={backendStatus} />
-              <span className="text-[11px] text-steel-400">
-                {backendStatus === 'healthy'
-                  ? 'API ONLINE'
-                  : backendStatus === 'unreachable'
-                  ? 'API OFFLINE'
-                  : 'CONNECTING...'}
-              </span>
-            </div>
+          {/* Desktop Model Lab Quick Action */}
+          <div className="hidden sm:flex items-center gap-3">
+            <Link to="/model-lab">
+              <Button variant="cyan-solid" size="sm" className="gap-2 text-xs">
+                <Database className="w-3.5 h-3.5" />
+                <span>Launch Lab</span>
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Trigger */}
@@ -154,14 +119,13 @@ export function Navbar() {
             ))}
           </nav>
 
-          <div className="pt-6 border-t border-graphite-700 flex items-center justify-between text-xs font-mono">
-            <span className="text-steel-500">Backend Status:</span>
-            <div className="flex items-center gap-2">
-              <StatusDot status={backendStatus} />
-              <span className="text-bone-100 uppercase">
-                {backendStatus === 'healthy' ? 'Connected' : 'Unreachable'}
-              </span>
-            </div>
+          <div className="pt-6 border-t border-graphite-700">
+            <Link to="/model-lab" className="block w-full">
+              <Button variant="cyan-solid" size="md" className="w-full gap-2">
+                <Database className="w-4 h-4" />
+                <span>Launch Model Lab</span>
+              </Button>
+            </Link>
           </div>
         </div>
       )}

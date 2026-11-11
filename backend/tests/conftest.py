@@ -91,6 +91,8 @@ class LocalApiClient:
                 return TestResponse(
                     200, models.list_trainable_models(task_type=params.get("task_type"))
                 )
+            if path == "/api/datasets/samples":
+                return TestResponse(200, datasets.list_sample_datasets())
             if path == "/api/datasets":
                 return TestResponse(
                     200,
@@ -160,6 +162,12 @@ class LocalApiClient:
         params = {k: v[0] for k, v in parse_qs(parsed.query).items()}
 
         try:
+            m_load = re.match(r"^/api/datasets/samples/([^/]+)/load$", path)
+            if m_load:
+                sample_id = m_load.group(1)
+                res = datasets.load_sample_dataset(sample_id, db=self.db)
+                return TestResponse(201, res)
+
             if path == "/api/datasets/upload":
                 if not files or "file" not in files:
                     return TestResponse(

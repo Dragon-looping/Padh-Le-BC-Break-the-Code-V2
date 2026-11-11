@@ -26,6 +26,8 @@ from app.schemas.dataset import (
     DatasetProfileResponse,
     DatasetSummary,
     DatasetUploadResponse,
+    SampleDatasetInfo,
+    SampleDatasetListResponse,
 )
 
 
@@ -444,6 +446,170 @@ class DatasetService:
             )
             for d in records
         ]
+
+    def list_sample_datasets(self) -> SampleDatasetListResponse:
+        samples = [SampleDatasetInfo(**item) for item in SAMPLE_DATASETS_CATALOG.values()]
+        return SampleDatasetListResponse(total=len(samples), samples=samples)
+
+    def load_sample_dataset(self, db: Session, sample_id: str) -> DatasetUploadResponse:
+        sample_meta = SAMPLE_DATASETS_CATALOG.get(sample_id)
+        if not sample_meta:
+            raise NotFoundException(
+                f"Sample dataset '{sample_id}' not found. Available samples: {list(SAMPLE_DATASETS_CATALOG.keys())}",
+                code="SAMPLE_NOT_FOUND",
+            )
+
+        samples_dir = Path(__file__).resolve().parent.parent.parent / "datasets" / "samples"
+        source_path = samples_dir / sample_meta["filename"]
+        if not source_path.exists():
+            raise NotFoundException(
+                f"Sample dataset file '{sample_meta['filename']}' could not be located on disk.",
+                code="SAMPLE_FILE_MISSING",
+            )
+
+        with open(source_path, "rb") as f:
+            content = f.read()
+
+        df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+
+        dataset_id = str(uuid.uuid4())
+        stored_filename = f"{dataset_id}.csv"
+        destination_path = self.upload_dir / stored_filename
+
+        with open(destination_path, "wb") as f:
+            f.write(content)
+
+        profile_data = self._generate_profile_dict(df)
+
+        dataset_model = DatasetModel(
+            id=dataset_id,
+            original_filename=sample_meta["filename"],
+            stored_filename=stored_filename,
+            file_path=str(destination_path),
+            file_size_bytes=len(content),
+            row_count=len(df),
+            column_count=len(df.columns),
+            status="uploaded",
+            profile_json=json.dumps(profile_data),
+        )
+        dataset_repo.create(db, dataset_model)
+
+        return DatasetUploadResponse(
+            dataset_id=dataset_id,
+            original_filename=sample_meta["filename"],
+            file_size_bytes=len(content),
+            status="uploaded",
+            rows=len(df),
+            columns=len(df.columns),
+            profile_url=f"/api/datasets/{dataset_id}/profile",
+        )
+
+
+SAMPLE_DATASETS_CATALOG: Dict[str, Dict[str, Any]] = {
+    "iris": {
+        "id": "iris",
+        "display_name": "Iris Flower Classification",
+        "description": "The classic multiclass classification benchmark from scikit-learn. Predict 3 flower species (setosa, versicolor, virginica) from 4 botanical petal and sepal measurements.",
+        "filename": "iris.csv",
+        "row_count": 150,
+        "feature_count": 4,
+        "target_column": "species",
+        "task_type": "classification",
+        "difficulty": "Beginner",
+        "available_algorithms": [
+            "logistic_regression",
+            "knn_classifier",
+            "decision_tree_classifier",
+            "random_forest_classifier",
+            "naive_bayes",
+            "svm_classifier",
+            "gradient_boosting_classifier",
+        ],
+        "educational_objectives": [
+            "Understand multiclass classification (3 classes)",
+            "Explore 2D/3D feature distributions and class overlap",
+            "Observe how K-Nearest Neighbors classifies points in metric space",
+            "Compare accuracy and confusion matrix across linear, tree, and ensemble models",
+        ],
+        "disclaimer": None,
+    },
+    "breast_cancer": {
+        "id": "breast_cancer",
+        "display_name": "Breast Cancer Wisconsin Diagnostic",
+        "description": "Standard binary classification benchmark from scikit-learn. Classify breast mass cell nuclei features as malignant or benign across 30 real-valued morphological attributes.",
+        "filename": "breast_cancer.csv",
+        "row_count": 569,
+        "feature_count": 30,
+        "target_column": "diagnosis",
+        "task_type": "classification",
+        "difficulty": "Beginner to Intermediate",
+        "available_algorithms": [
+            "logistic_regression",
+            "knn_classifier",
+            "decision_tree_classifier",
+            "random_forest_classifier",
+            "naive_bayes",
+            "svm_classifier",
+            "gradient_boosting_classifier",
+        ],
+        "educational_objectives": [
+            "Understand binary classification (malignant vs. benign)",
+            "Explore the critical tradeoff between Precision and Recall",
+            "Analyze why false negatives (missing malignant tumors) are costlier than false positives",
+            "Compare high-dimensional feature scaling and regularized models",
+        ],
+        "disclaimer": "Public educational dataset from UCI/scikit-learn. For academic machine learning evaluation only, not for clinical diagnostic or medical decision-making.",
+    },
+    "churn": {
+        "id": "churn",
+        "display_name": "Customer Churn Prediction",
+        "description": "Supervised binary classification predicting whether telecommunications subscribers will cancel their contract based on account tenure, monthly charges, and support interactions.",
+        "filename": "classification_churn.csv",
+        "row_count": 100,
+        "feature_count": 5,
+        "target_column": "churn",
+        "task_type": "classification",
+        "difficulty": "Beginner",
+        "available_algorithms": [
+            "logistic_regression",
+            "knn",
+            "decision_tree_classifier",
+            "random_forest_classifier",
+            "gradient_boosting_classifier",
+        ],
+        "educational_objectives": [
+            "Formulate customer churn as a binary classification problem",
+            "Preprocess mixed numerical and categorical subscriber features",
+            "Optimize F1 macro to detect churn without excessive false alarms",
+        ],
+        "disclaimer": None,
+    },
+    "housing": {
+        "id": "housing",
+        "display_name": "Real Estate Housing Valuation",
+        "description": "Supervised regression predicting continuous residential property market sale prices from square footage, bedroom/bathroom counts, and neighborhood tier.",
+        "filename": "regression_housing.csv",
+        "row_count": 100,
+        "feature_count": 4,
+        "target_column": "price",
+        "task_type": "regression",
+        "difficulty": "Beginner",
+        "available_algorithms": [
+            "linear_regression",
+            "ridge_regression",
+            "lasso_regression",
+            "decision_tree_regressor",
+            "random_forest_regressor",
+            "gradient_boosting_regressor",
+        ],
+        "educational_objectives": [
+            "Formulate continuous real estate valuation as regression",
+            "Benchmark regularized linear baselines (L1/L2) against non-linear tree models",
+            "Evaluate model performance using R², RMSE, and MAE error metrics",
+        ],
+        "disclaimer": None,
+    },
+}
 
 
 dataset_service = DatasetService()

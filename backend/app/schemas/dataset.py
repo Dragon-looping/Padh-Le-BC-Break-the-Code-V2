@@ -70,3 +70,24 @@ class DatasetSummary(BaseModel):
 class DatasetListResponse(BaseModel):
     total: int
     datasets: List[DatasetSummary]
+
+
+class SampleDatasetInfo(BaseModel):
+    id: str
+    display_name: str
+    description: str
+    filename: str
+    row_count: int
+    feature_count: int
+    target_column: str
+    task_type: str  # classification | regression
+    difficulty: str  # Beginner | Intermediate
+    available_algorithms: List[str]
+    educational_objectives: List[str]
+    disclaimer: Optional[str] = None
+
+
+class SampleDatasetListResponse(BaseModel):
+    total: int
+    samples: List[SampleDatasetInfo]
+

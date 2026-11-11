@@ -10,10 +10,30 @@ from app.schemas.dataset import (
     DatasetProfileResponse,
     DatasetSummary,
     DatasetUploadResponse,
+    SampleDatasetListResponse,
 )
 from app.services.dataset_service import dataset_service
 
 router = APIRouter(prefix="/datasets", tags=["Datasets"])
+
+
+@router.get(
+    "/samples",
+    response_model=SampleDatasetListResponse,
+    summary="List built-in sample datasets",
+)
+def list_sample_datasets():
+    return dataset_service.list_sample_datasets()
+
+
+@router.post(
+    "/samples/{sample_id}/load",
+    response_model=DatasetUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Load a built-in sample dataset into user workspace",
+)
+def load_sample_dataset(sample_id: str, db: Session = Depends(get_db)):
+    return dataset_service.load_sample_dataset(db, sample_id)
 
 
 @router.post(

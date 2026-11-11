@@ -2,7 +2,6 @@ from pathlib import Path
 
 
 def test_real_classification_experiment(client):
-    # Upload sample classification dataset (robust path resolution)
     sample_path = Path(__file__).resolve().parent.parent / "datasets" / "samples" / "classification_churn.csv"
     assert sample_path.exists(), f"Sample churn CSV must exist at {sample_path}"
 
@@ -14,14 +13,12 @@ def test_real_classification_experiment(client):
     assert upload_res.status_code == 201
     dataset_id = upload_res.json()["dataset_id"]
 
-    # Configure target
     config_res = client.post(
         f"/api/datasets/{dataset_id}/configure",
         json={"target_column": "churn", "task_type": "classification"},
     )
     assert config_res.status_code == 200
 
-    # Run real experiment with 4 distinct models
     experiment_payload = {
         "dataset_id": dataset_id,
         "target_column": "churn",
@@ -51,9 +48,8 @@ def test_real_classification_experiment(client):
         assert 0.0 <= metrics["accuracy"] <= 1.0
         assert "f1_macro" in metrics
         assert "confusion_matrix" in metrics
-        assert len(metrics["confusion_matrix"]) == 2  # binary classification
+        assert len(metrics["confusion_matrix"]) == 2
 
-    # Check comparison & recommendation
     comp = edata["comparison"]
     assert comp is not None
     assert comp["best_model_id"] in experiment_payload["model_ids"]

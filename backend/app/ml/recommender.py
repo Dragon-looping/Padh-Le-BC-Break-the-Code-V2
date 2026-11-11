@@ -67,7 +67,7 @@ class ModelRecommender:
                         cons.append("Quadratic training complexity on very large sample sizes")
                         score -= 0.20
 
-            else:  # Regression
+            else:
                 if mid == "linear_regression":
                     pros.append("Classic interpretable baseline with instant training")
                     if priority in ("interpretability", "speed"):

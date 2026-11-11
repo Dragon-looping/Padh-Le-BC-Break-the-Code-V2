@@ -33,7 +33,6 @@ class ProgressService:
     def complete_lesson(
         self, db: Session, lesson_id: str, session_id: str = "default_learner"
     ) -> LessonCompleteResponse:
-        # Validate that lesson exists
         learning_service.get_lesson(lesson_id)
         progress = progress_repo.mark_lesson_complete(
             db, lesson_id=lesson_id, session_id=session_id

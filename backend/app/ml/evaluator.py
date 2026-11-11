@@ -24,7 +24,6 @@ class Evaluator:
         y_pred_train: Optional[np.ndarray] = None,
         target_classes: Optional[List[str]] = None,
     ) -> Tuple[Dict[str, Any], Optional[float], Optional[float], Optional[str]]:
-        # Compute test metrics
         acc = float(accuracy_score(y_true_test, y_pred_test))
         prec_macro = float(
             precision_score(y_true_test, y_pred_test, average="macro", zero_division=0)
@@ -69,7 +68,6 @@ class Evaluator:
             "classification_report": report,
         }
 
-        # Train metrics and overfitting detection
         train_metric = None
         test_metric = acc
         overfitting_warning = None
@@ -129,7 +127,6 @@ class Evaluator:
         task_type: str,
         cv_folds: int = 3,
     ) -> Optional[Dict[str, Any]]:
-        # Only compute CV if sample size allows
         if len(y) < cv_folds * 3:
             return None
 

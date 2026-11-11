@@ -55,7 +55,6 @@ def test_duplicate_column_names_rejected(client):
 
 
 def test_path_traversal_sanitization(client):
-    # Attacker tries ../../evil.csv
     csv_content = "x,y\n1,2\n3,4\n"
     file_tuple = (
         "../../../../etc/evil.csv",
@@ -66,7 +65,6 @@ def test_path_traversal_sanitization(client):
 
     assert response.status_code == 201
     data = response.json()
-    # Server must strip directory traversal and sanitize to basename
     assert "/" not in data["original_filename"]
     assert "\\" not in data["original_filename"]
     assert data["original_filename"] == "evil.csv"

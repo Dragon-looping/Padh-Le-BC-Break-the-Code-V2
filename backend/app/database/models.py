@@ -29,8 +29,8 @@ class DatasetModel(Base):
     row_count = Column(Integer, nullable=False, default=0)
     column_count = Column(Integer, nullable=False, default=0)
     target_column = Column(String(255), nullable=True)
-    detected_task = Column(String(50), nullable=True)  # classification, regression, clustering
-    status = Column(String(50), nullable=False, default="uploaded")  # uploaded, configured, error
+    detected_task = Column(String(50), nullable=True)
+    status = Column(String(50), nullable=False, default="uploaded")
     profile_json = Column(Text, nullable=True)
     created_at = Column(DateTime, default=utc_now, nullable=False)
     updated_at = Column(DateTime, default=utc_now, onupdate=utc_now, nullable=False)
@@ -45,11 +45,11 @@ class ExperimentModel(Base):
     dataset_id = Column(String(36), ForeignKey("datasets.id"), nullable=False)
     name = Column(String(255), nullable=True)
     target_column = Column(String(255), nullable=False)
-    task_type = Column(String(50), nullable=False)  # classification or regression
+    task_type = Column(String(50), nullable=False)
     test_size = Column(Float, nullable=False, default=0.2)
     random_state = Column(Integer, nullable=False, default=42)
-    priority = Column(String(50), nullable=True, default="performance")  # performance, speed, interpretability, balanced
-    status = Column(String(50), nullable=False, default="pending")  # pending, running, completed, failed
+    priority = Column(String(50), nullable=True, default="performance")
+    status = Column(String(50), nullable=False, default="pending")
     error_message = Column(Text, nullable=True)
     recommendation_json = Column(Text, nullable=True)
     report_json = Column(Text, nullable=True)
@@ -67,14 +67,14 @@ class ModelResultModel(Base):
     experiment_id = Column(String(36), ForeignKey("experiments.id"), nullable=False)
     model_id = Column(String(100), nullable=False)
     model_name = Column(String(255), nullable=False)
-    category = Column(String(50), nullable=False)  # classification or regression
+    category = Column(String(50), nullable=False)
     hyperparameters_json = Column(Text, nullable=False, default="{}")
     metrics_json = Column(Text, nullable=False, default="{}")
     training_duration_seconds = Column(Float, nullable=False, default=0.0)
     cv_scores_json = Column(Text, nullable=True)
     train_metric = Column(Float, nullable=True)
     test_metric = Column(Float, nullable=True)
-    status = Column(String(50), nullable=False, default="completed")  # completed, failed
+    status = Column(String(50), nullable=False, default="completed")
     error_message = Column(Text, nullable=True)
     is_tuned = Column(Boolean, nullable=False, default=False)
     tuning_comparison_json = Column(Text, nullable=True)

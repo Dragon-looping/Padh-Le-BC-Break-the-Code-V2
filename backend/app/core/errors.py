@@ -88,7 +88,6 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
 async def validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
-    # Format FastAPI/Pydantic validation errors cleanly
     details = []
     for err in exc.errors():
         loc = " -> ".join([str(x) for x in err.get("loc", []) if x != "body"])

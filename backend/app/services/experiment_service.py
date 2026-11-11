@@ -32,7 +32,6 @@ class ExperimentService:
 
         task_type = payload.task_type or dataset.detected_task
         if not task_type:
-            # Auto-infer
             if pd.api.types.is_numeric_dtype(df[payload.target_column]) and df[payload.target_column].nunique() > 20:
                 task_type = "regression"
             else:
@@ -40,7 +39,6 @@ class ExperimentService:
 
         experiment_id = str(uuid.uuid4())
 
-        # 1. Create initial experiment record
         exp_model = ExperimentModel(
             id=experiment_id,
             dataset_id=dataset.id,
@@ -53,7 +51,6 @@ class ExperimentService:
         )
         experiment_repo.create(db, exp_model)
 
-        # 2. Train and evaluate requested models
         results, warnings, _ = trainer.train_and_evaluate_models(
             df=df,
             target_column=payload.target_column,
@@ -64,14 +61,12 @@ class ExperimentService:
             custom_hyperparameters=payload.hyperparameters,
         )
 
-        # 3. Model comparison & recommendation
         comparison = comparator.compare_and_rank(
             results=results,
             task_type=task_type,
             priority=payload.priority,
         )
 
-        # 4. Save results to database
         for r in results:
             mr = ModelResultModel(
                 experiment_id=experiment_id,
@@ -89,7 +84,6 @@ class ExperimentService:
             )
             experiment_repo.add_model_result(db, mr)
 
-        # Update experiment record
         exp_model.status = "completed"
         exp_model.recommendation_json = json.dumps(comparison.model_dump())
         experiment_repo.update(db, exp_model)
@@ -212,7 +206,6 @@ class ExperimentService:
         dataset = dataset_service.get_dataset(db, exp.dataset_id)
         df = dataset_service.load_dataframe(dataset)
 
-        # Prepare exact split used in experiment
         prep_result = prepare_and_split_data(
             df=df,
             target_column=exp.target_column,
@@ -230,7 +223,6 @@ class ExperimentService:
             cv_folds=payload.cv_folds,
         )
 
-        # Update model result record if exists
         mr = experiment_repo.get_model_result(db, experiment_id, payload.model_id)
         if mr:
             mr.is_tuned = True

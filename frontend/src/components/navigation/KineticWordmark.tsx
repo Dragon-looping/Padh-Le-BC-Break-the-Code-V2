@@ -9,7 +9,6 @@ export function KineticWordmark({ className }: { className?: string }) {
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    // Initial decode scramble animation (approx 900ms)
     let frame = 0;
     const totalFrames = 28;
     const interval = setInterval(() => {
@@ -48,10 +47,8 @@ export function KineticWordmark({ className }: { className?: string }) {
       className={`group inline-flex items-center font-display font-black tracking-tight text-bone-100 hover:text-cyan-400 transition-colors select-none ${className || ''}`}
       aria-label="PADH LE BC: Break the Code Home"
     >
-      {/* Screen reader static name */}
       <span className="sr-only">PADH LE BC (Break the Code)</span>
 
-      {/* Visual scramble text */}
       <span aria-hidden="true" className="flex items-center text-xl sm:text-2xl">
         <span className="tracking-wider">{displayedPrefix}</span>
         <span className="text-cyan-400 font-extrabold transition-all duration-300">

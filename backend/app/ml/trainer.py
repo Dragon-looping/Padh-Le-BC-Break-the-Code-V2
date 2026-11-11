@@ -20,7 +20,6 @@ class ModelTrainer:
         random_state: int = 42,
         custom_hyperparameters: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> Tuple[List[ModelEvaluationResult], List[str], PreprocessingResult]:
-        # 1. Validate requested models
         for mid in model_ids:
             if not is_trainable(mid, task_type):
                 raise BadRequestException(
@@ -28,7 +27,6 @@ class ModelTrainer:
                     code="UNSUPPORTED_MODEL_FOR_TASK",
                 )
 
-        # 2. Preprocess and split dataset strictly once
         prep_result = prepare_and_split_data(
             df=df,
             target_column=target_column,
@@ -45,7 +43,6 @@ class ModelTrainer:
                 f"Small training split ({len(prep_result.X_train)} samples). Metric estimates may have higher variance."
             )
 
-        # 3. Train and evaluate each model under the exact same split
         for mid in model_ids:
             model_info = TRAINABLE_MODELS[mid]
             user_params = (
@@ -67,7 +64,6 @@ class ModelTrainer:
 
                 duration = float(time.perf_counter() - start_time)
 
-                # Predict on test and train
                 y_pred_test = estimator.predict(prep_result.X_test)
                 y_pred_train = estimator.predict(prep_result.X_train)
 
@@ -97,7 +93,6 @@ class ModelTrainer:
                         y_pred_train=y_pred_train,
                     )
 
-                # Cross-validation
                 cv_scores = evaluator.compute_cross_validation(
                     estimator=estimator,
                     X=prep_result.X_train,
@@ -112,10 +107,8 @@ class ModelTrainer:
                 error_msg = str(e)
                 metrics = {}
 
-            # Hyperparameters record
             effective_params = model_info["default_params"].copy()
             effective_params.update(user_params)
-            # Make sure parameters are JSON serializable
             clean_params = {
                 k: v if isinstance(v, (int, float, str, bool)) or v is None else str(v)
                 for k, v in effective_params.items()

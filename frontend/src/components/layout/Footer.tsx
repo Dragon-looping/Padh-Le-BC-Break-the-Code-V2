@@ -10,7 +10,6 @@ export function Footer() {
     <footer className="w-full border-t border-graphite-700/80 bg-ink-950/90 py-12 text-sm font-mono">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-graphite-700/60">
-          {/* Brand Info */}
           <div className="md:col-span-2 space-y-3">
             <div className="font-display font-black text-xl text-bone-100 tracking-tight">
               PADH LE <span className="text-cyan-400">BC</span>
@@ -21,7 +20,6 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div className="space-y-2">
             <div className="text-xs font-semibold uppercase text-steel-400 tracking-wider">Platform</div>
             <ul className="space-y-1.5 text-xs text-steel-500">
@@ -32,7 +30,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Accessibility & Settings */}
           <div className="space-y-3">
             <div className="text-xs font-semibold uppercase text-steel-400 tracking-wider">Preferences</div>
             <button

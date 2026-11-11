@@ -1,8 +1,5 @@
 import React from 'react';
 
-/**
- * Format metric numbers with precision for display while keeping full precision accessible
- */
 export function formatMetric(val: unknown, decimals = 4): string {
   if (val === null || val === undefined) return '—';
   if (typeof val === 'number') {

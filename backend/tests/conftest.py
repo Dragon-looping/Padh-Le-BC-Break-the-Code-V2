@@ -175,7 +175,6 @@ class LocalApiClient:
                         {"error": {"code": "MISSING_FILE", "message": "File field is required."}},
                     )
                 file_info = files["file"]
-                # file_info is (filename, file_obj, content_type)
                 if isinstance(file_info, tuple):
                     filename, fileobj, content_type = file_info
                 else:

@@ -1,7 +1,3 @@
-/**
- * Authoritative bundled sample datasets for guided projects.
- * Matches backend/datasets/samples/ for deterministic, real model training.
- */
 
 export const CHURN_SAMPLE_CSV = `age,tenure_months,monthly_charges,contract_type,support_calls,churn
 56,45,85.54,Month-to-month,3,Yes

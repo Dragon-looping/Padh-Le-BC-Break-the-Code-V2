@@ -14,9 +14,7 @@ from sklearn.svm import SVC
 from app.core.errors import BadRequestException
 
 
-# Catalog of trainable estimators and default parameters
 TRAINABLE_MODELS: Dict[str, Dict[str, Any]] = {
-    # --- REGRESSION MODELS ---
     "linear_regression": {
         "name": "Linear Regression",
         "category": "regression",
@@ -92,7 +90,6 @@ TRAINABLE_MODELS: Dict[str, Dict[str, Any]] = {
         },
         "description": "Additive ensemble of trees minimizing squared error loss.",
     },
-    # --- CLASSIFICATION MODELS ---
     "logistic_regression": {
         "name": "Logistic Regression",
         "category": "classification",

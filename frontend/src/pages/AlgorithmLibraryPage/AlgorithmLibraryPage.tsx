@@ -44,7 +44,6 @@ export function AlgorithmLibraryPage() {
     return () => controller.abort();
   }, [activeCategory, trainableFilter]);
 
-  // Group algorithms by category
   const categories = [
     { id: 'regression', title: 'Regression Models', desc: 'Predict continuous numerical outcomes' },
     { id: 'classification', title: 'Classification Models', desc: 'Categorize inputs into discrete classes or probabilities' },
@@ -57,7 +56,6 @@ export function AlgorithmLibraryPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header (Taxonomy Poster style) */}
       <div className="border-b border-graphite-700 pb-8 mb-10">
         <div className="inline-flex items-center gap-2 px-2.5 py-1 text-xs font-mono border border-cyan-400/40 bg-cyan-400/10 text-cyan-400 mb-4 rounded-sm">
           <Cpu className="w-3.5 h-3.5" />
@@ -70,7 +68,6 @@ export function AlgorithmLibraryPage() {
           Comprehensive catalogue of machine learning estimators. Inspect algorithm intuition, mathematics, and scikit-learn code.
         </p>
 
-        {/* Filter Controls */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
             {(['all', 'regression', 'classification', 'unsupervised'] as const).map((cat) => (
@@ -100,7 +97,6 @@ export function AlgorithmLibraryPage() {
         </div>
       </div>
 
-      {/* State Rendering */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SkeletonCard />
@@ -169,7 +165,6 @@ export function AlgorithmLibraryPage() {
                       </div>
 
                       <div className="pt-6 border-t border-graphite-700/60 mt-4 space-y-3">
-                        {/* Training support indicator */}
                         <div className="flex items-center justify-between text-xs font-mono">
                           <span className="text-steel-500">Model Lab:</span>
                           {algo.training_supported ? (

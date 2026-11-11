@@ -12,7 +12,6 @@ export async function createExperiment(
   payload: ExperimentCreateRequest,
   signal?: AbortSignal
 ): Promise<ExperimentResponse> {
-  // Never auto-retry POST /experiments
   try {
     const res = await apiClient.post<ExperimentResponse>('/experiments', payload, {
       signal,

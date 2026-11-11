@@ -12,7 +12,6 @@ def test_list_sample_datasets(client):
     assert "iris" in sample_ids
     assert "breast_cancer" in sample_ids
 
-    # Verify Iris details
     iris = next(s for s in data["samples"] if s["id"] == "iris")
     assert iris["display_name"] == "Iris Flower Classification"
     assert iris["row_count"] == 150
@@ -21,7 +20,6 @@ def test_list_sample_datasets(client):
     assert iris["task_type"] == "classification"
     assert "knn_classifier" in iris["available_algorithms"]
 
-    # Verify Breast Cancer details
     bc = next(s for s in data["samples"] if s["id"] == "breast_cancer")
     assert bc["display_name"] == "Breast Cancer Wisconsin Diagnostic"
     assert bc["row_count"] == 569
@@ -32,7 +30,6 @@ def test_list_sample_datasets(client):
 
 
 def test_load_iris_sample_and_train_knn(client):
-    # 1. Load Iris
     load_res = client.post("/api/datasets/samples/iris/load")
     assert load_res.status_code == 201
     load_data = load_res.json()
@@ -40,14 +37,12 @@ def test_load_iris_sample_and_train_knn(client):
     assert load_data["rows"] == 150
     assert load_data["columns"] == 5
 
-    # 2. Inspect Profile
     prof_res = client.get(f"/api/datasets/{dataset_id}/profile")
     assert prof_res.status_code == 200
     prof = prof_res.json()
     assert prof["row_count"] == 150
     assert "species" in prof["columns"]
 
-    # 3. Configure target
     conf_res = client.post(
         f"/api/datasets/{dataset_id}/configure",
         json={"target_column": "species", "task_type": "classification"},
@@ -57,7 +52,6 @@ def test_load_iris_sample_and_train_knn(client):
     assert conf_data["task_type"] == "classification"
     assert "knn_classifier" in conf_data["compatible_models"]
 
-    # 4. Train real models including KNN
     exp_res = client.post(
         "/api/experiments",
         json={
@@ -81,7 +75,6 @@ def test_load_iris_sample_and_train_knn(client):
 
 
 def test_load_breast_cancer_sample_and_train(client):
-    # 1. Load Breast Cancer
     load_res = client.post("/api/datasets/samples/breast_cancer/load")
     assert load_res.status_code == 201
     load_data = load_res.json()
@@ -89,14 +82,12 @@ def test_load_breast_cancer_sample_and_train(client):
     assert load_data["rows"] == 569
     assert load_data["columns"] == 31
 
-    # 2. Configure target
     conf_res = client.post(
         f"/api/datasets/{dataset_id}/configure",
         json={"target_column": "diagnosis", "task_type": "classification"},
     )
     assert conf_res.status_code == 200
 
-    # 3. Train real models
     exp_res = client.post(
         "/api/experiments",
         json={

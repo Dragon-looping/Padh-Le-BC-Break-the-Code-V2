@@ -45,7 +45,6 @@ def prepare_and_split_data(
             code="INVALID_TARGET_COLUMN",
         )
 
-    # Clean rows where target itself is null
     df_clean = df.dropna(subset=[target_column]).copy()
     if len(df_clean) < 10:
         raise InvalidDatasetException(
@@ -62,7 +61,6 @@ def prepare_and_split_data(
             code="NO_FEATURE_COLUMNS",
         )
 
-    # Encode target if classification
     label_encoder = None
     target_classes = None
     y_processed = y.values
@@ -78,7 +76,6 @@ def prepare_and_split_data(
                 code="INSUFFICIENT_CLASSES",
             )
     else:
-        # Regression target must be numeric
         try:
             y_processed = y.astype(float).values
         except Exception:
@@ -87,10 +84,8 @@ def prepare_and_split_data(
                 code="NON_NUMERIC_REGRESSION_TARGET",
             )
 
-    # Split data FIRST before any transformations to strictly prevent data leakage
     stratify_split = None
     if task_type == "classification":
-        # Check if every class has at least 2 samples for stratification
         class_counts = pd.Series(y_processed).value_counts()
         if (class_counts >= 2).all() and len(df_clean) * test_size >= len(class_counts):
             stratify_split = y_processed
@@ -104,12 +99,10 @@ def prepare_and_split_data(
             stratify=stratify_split,
         )
     except Exception:
-        # Fallback without stratification if sample distribution is too small
         X_train_raw, X_test_raw, y_train, y_test = train_test_split(
             X, y_processed, test_size=test_size, random_state=random_state
         )
 
-    # Identify numeric and categorical columns
     numeric_cols = []
     categorical_cols = []
 
@@ -146,11 +139,9 @@ def prepare_and_split_data(
 
     preprocessor = ColumnTransformer(transformers=transformers, remainder="drop")
 
-    # CRITICAL: Fit preprocessor ONLY on X_train_raw
     X_train_transformed = preprocessor.fit_transform(X_train_raw)
     X_test_transformed = preprocessor.transform(X_test_raw)
 
-    # Extract feature names
     feature_names = []
     if numeric_cols:
         feature_names.extend(numeric_cols)

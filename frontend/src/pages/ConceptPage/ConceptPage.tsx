@@ -84,7 +84,6 @@ export function ConceptPage() {
       </header>
 
       <div className="space-y-8 font-sans leading-relaxed text-bone-100">
-        {/* Simple Explanation */}
         <section className="space-y-2">
           <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400 flex items-center gap-1.5">
             <Lightbulb className="w-3.5 h-3.5 text-cyan-400" />
@@ -95,7 +94,6 @@ export function ConceptPage() {
           </p>
         </section>
 
-        {/* Real World Example */}
         <section className="space-y-2">
           <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400 flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5 text-lime-400" />
@@ -106,7 +104,6 @@ export function ConceptPage() {
           </div>
         </section>
 
-        {/* Key Points */}
         {concept.key_points && concept.key_points.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400 flex items-center gap-1.5">
@@ -124,7 +121,6 @@ export function ConceptPage() {
           </section>
         )}
 
-        {/* Common Mistakes */}
         {concept.common_mistakes && concept.common_mistakes.length > 0 && (
           <Callout variant="warning" title="Watch Out: Common Mistakes">
             <ul className="list-disc pl-4 space-y-1 text-sm">
@@ -135,7 +131,6 @@ export function ConceptPage() {
           </Callout>
         )}
 
-        {/* Related Concepts */}
         {concept.related_concepts && concept.related_concepts.length > 0 && (
           <section className="pt-6 border-t border-graphite-700/60 space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-500">

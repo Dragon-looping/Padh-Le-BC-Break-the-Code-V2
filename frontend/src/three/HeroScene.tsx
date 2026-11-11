@@ -10,13 +10,11 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
   const [hasWebGL, setHasWebGL] = useState<boolean>(true);
 
   useEffect(() => {
-    // If reduced motion is explicitly preferred, do not mount WebGL canvas
     if (reducedMotion) return;
 
     const container = containerRef.current;
     if (!container) return;
 
-    // Check WebGL availability
     try {
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -29,19 +27,16 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
       return;
     }
 
-    // Determine particle tier based on viewport and device concurrency
     const width = container.clientWidth || window.innerWidth;
     const isMobile = width < 640;
     const isTablet = width >= 640 && width < 1024;
     const particleCount = isMobile ? 14000 : isTablet ? 30000 : 60000;
     const maxDpr = isMobile ? 1.25 : 1.75;
 
-    // Scene & Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.1, 100);
     camera.position.set(0.6, 0.2, 3.2);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: false,
@@ -51,7 +46,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
     container.appendChild(renderer.domElement);
 
-    // Build geometry: spiralling ribbons offset to the right (leaving left third calm)
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     const seeds = new Float32Array(particleCount);
@@ -67,12 +61,10 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
       const radius = 0.3 + Math.pow(Math.random(), 1.6) * 2.2;
       const z = (Math.random() - 0.5) * 3.5;
 
-      // Center the vortex toward the right side (+0.6) so left third remains clear for headline
       positions[i3] = 0.5 + Math.cos(angle) * radius;
       positions[i3 + 1] = Math.sin(angle) * (radius * 0.75) + Math.sin(t * 10.0) * 0.2;
       positions[i3 + 2] = z;
 
-      // Color choice: 85% cyan shades, 15% sparse orange threads
       const isOrange = Math.random() > 0.88;
       const c = isOrange ? orangeColor : Math.random() > 0.5 ? cyanColor : deepCyan;
       colors[i3] = c.r;
@@ -87,7 +79,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     geometry.setAttribute('seed', new THREE.BufferAttribute(seeds, 1));
 
-    // Custom Shader Material for GPU vertex-shader animation
     const uniforms = {
       uTime: { value: 0 },
       uPointer: { value: new THREE.Vector2(0, 0) },
@@ -159,7 +150,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
     const points = new THREE.Points(geometry, material);
     scene.add(points);
 
-    // Interactive pointer parallax
     const targetPointer = new THREE.Vector2(0, 0);
     const onPointerMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
@@ -177,14 +167,12 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // Handle visibility / pause when hidden
     let isPaused = false;
     const onVisibilityChange = () => {
       isPaused = document.hidden;
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
 
-    // Resize handler
     const onResize = () => {
       if (!container) return;
       const w = container.clientWidth;
@@ -195,7 +183,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
     };
     window.addEventListener('resize', onResize);
 
-    // Animation Loop
     let animationFrameId: number;
     let clock = new THREE.Clock();
 
@@ -206,7 +193,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
       const delta = clock.getDelta();
       uniforms.uTime.value += delta;
 
-      // Ease pointer uniform
       uniforms.uPointer.value.lerp(targetPointer, 0.05);
 
       renderer.render(scene, camera);
@@ -214,7 +200,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
 
     animate();
 
-    // Clean up
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('pointermove', onPointerMove);
@@ -232,7 +217,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
   }, [reducedMotion]);
 
   if (reducedMotion || !hasWebGL) {
-    // Accessible poster fallback: CSS dot-field poster
     return (
       <div
         aria-hidden="true"

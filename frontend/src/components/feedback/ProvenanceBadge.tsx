@@ -32,7 +32,6 @@ export function ProvenanceBadge({ type, className, subtext }: ProvenanceBadgePro
       <span
         className={clsx(
           'inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider font-semibold text-orange-500 bg-orange-500/10 border border-orange-500/40 rounded-sm select-none',
-          // Distinct hatched background
           'bg-[repeating-linear-gradient(45deg,transparent,transparent_6px,rgba(255,107,26,0.12)_6px,rgba(255,107,26,0.12)_12px)]',
           className
         )}
@@ -45,7 +44,6 @@ export function ProvenanceBadge({ type, className, subtext }: ProvenanceBadgePro
     );
   }
 
-  // Planned
   return (
     <span
       className={clsx(

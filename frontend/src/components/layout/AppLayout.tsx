@@ -8,7 +8,6 @@ export function AppLayout() {
   const location = useLocation();
   const [wiping, setWiping] = useState(false);
 
-  // Cyan scanline route wipe transition
   useEffect(() => {
     setWiping(true);
     window.scrollTo(0, 0);
@@ -18,7 +17,6 @@ export function AppLayout() {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-ink-950 text-bone-100 font-body">
-      {/* Skip to Content Link */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[9999] px-4 py-2 bg-cyan-400 text-ink-950 font-mono text-xs font-bold"
@@ -26,10 +24,8 @@ export function AppLayout() {
         Skip to main content
       </a>
 
-      {/* Static Film Grain Overlay */}
       <div className="film-grain" aria-hidden="true" />
 
-      {/* Thin Cyan Scanline Route Wipe */}
       {wiping && (
         <div
           aria-hidden="true"
@@ -37,17 +33,14 @@ export function AppLayout() {
         />
       )}
 
-      {/* Persistent Navigation */}
       <Navbar />
 
-      {/* Main Content Area */}
       <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

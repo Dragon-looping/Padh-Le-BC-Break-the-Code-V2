@@ -16,7 +16,6 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
-  // Close mobile nav on escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMobileOpen(false);
@@ -25,7 +24,6 @@ export function Navbar() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Close mobile nav on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
@@ -34,10 +32,8 @@ export function Navbar() {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-graphite-700/80 bg-ink-950/85 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Brand Wordmark */}
           <KineticWordmark />
 
-          {/* Desktop Nav Items */}
           <nav aria-label="Main Navigation" className="hidden lg:flex items-center gap-1 xl:gap-2">
             {NAV_ITEMS.map((item) => (
               <NavLink
@@ -57,7 +53,6 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Desktop Model Lab Quick Action */}
           <div className="hidden sm:flex items-center gap-3">
             <Link to="/model-lab">
               <Button variant="cyan-solid" size="sm" className="gap-2 text-xs">
@@ -67,7 +62,6 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Menu Trigger */}
           <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={() => setMobileOpen(true)}
@@ -81,7 +75,6 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Navigation Sheet */}
       {mobileOpen && (
         <div
           role="dialog"

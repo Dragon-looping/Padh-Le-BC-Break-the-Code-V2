@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class ColumnProfile(BaseModel):
     name: str
-    inferred_type: str  # numeric, categorical, datetime, text, boolean
+    inferred_type: str
     missing_count: int
     missing_percentage: float
     unique_count: int
@@ -36,7 +36,7 @@ class DatasetProfileResponse(BaseModel):
     column_profiles: List[ColumnProfile]
     duplicate_rows: int
     target_column: Optional[str] = None
-    detected_task: Optional[str] = None  # classification, regression
+    detected_task: Optional[str] = None
     preview_rows: List[Dict[str, Any]]
     class_distribution: Optional[Dict[str, int]] = None
     warnings: List[str] = Field(default_factory=list)
@@ -44,7 +44,7 @@ class DatasetProfileResponse(BaseModel):
 
 class DatasetConfigureRequest(BaseModel):
     target_column: str
-    task_type: Optional[str] = None  # classification or regression
+    task_type: Optional[str] = None
 
 
 class DatasetConfigureResponse(BaseModel):
@@ -80,8 +80,8 @@ class SampleDatasetInfo(BaseModel):
     row_count: int
     feature_count: int
     target_column: str
-    task_type: str  # classification | regression
-    difficulty: str  # Beginner | Intermediate
+    task_type: str
+    difficulty: str
     available_algorithms: List[str]
     educational_objectives: List[str]
     disclaimer: Optional[str] = None

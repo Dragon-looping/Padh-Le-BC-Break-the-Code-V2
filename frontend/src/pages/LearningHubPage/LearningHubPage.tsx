@@ -44,7 +44,6 @@ export function LearningHubPage() {
 
   const completedSet = new Set(progressData?.completed_lessons || []);
 
-  // Filter lessons based on client-side search query
   const filteredUnits = lessonsData?.units.map((unit) => {
     const matchedLessons = unit.lessons.filter((l) =>
       l.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -55,7 +54,6 @@ export function LearningHubPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Editorial Header with Lime Accent */}
       <div className="border-b border-graphite-700/80 pb-8 mb-10">
         <div className="inline-flex items-center gap-2 px-2.5 py-1 text-xs font-mono border border-lime-400/40 bg-lime-400/10 text-lime-400 mb-4 rounded-sm">
           <BookOpen className="w-3.5 h-3.5" />
@@ -68,7 +66,6 @@ export function LearningHubPage() {
           Master machine learning from foundational math to hyperparameter tuning. Each lesson pairs intuitive conceptual explanations with scikit-learn code.
         </p>
 
-        {/* Progress summary banner if available */}
         {progressData && progressData.total_completed > 0 && (
           <div className="mt-6 p-4 border border-lime-400/30 bg-lime-400/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -84,7 +81,6 @@ export function LearningHubPage() {
           </div>
         )}
 
-        {/* Client-side Search */}
         <div className="mt-8 relative max-w-md">
           <label htmlFor="curriculum-search" className="sr-only">
             Search curriculum lessons
@@ -101,7 +97,6 @@ export function LearningHubPage() {
         </div>
       </div>
 
-      {/* State Rendering */}
       {loading ? (
         <div className="space-y-6">
           <SkeletonCard />

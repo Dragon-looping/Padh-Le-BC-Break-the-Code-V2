@@ -17,10 +17,8 @@ from app.database.database import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: initialize database tables
     init_db()
     yield
-    # Shutdown logic if needed
 
 
 app = FastAPI(
@@ -33,7 +31,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -42,7 +39,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register exception handlers
 app.add_exception_handler(AppException, app_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
@@ -62,7 +58,6 @@ async def http_exception_handler(request, exc):
     )
 
 
-# Mount all API routes under /api
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 

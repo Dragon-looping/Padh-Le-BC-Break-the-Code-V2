@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class ModelInfo(BaseModel):
     id: str
     name: str
-    category: str  # regression, classification, unsupervised
+    category: str
     task_type: str
     short_description: str
     training_supported: bool
@@ -18,18 +18,18 @@ class ModelListResponse(BaseModel):
 
 
 class ModelRecommendationRequest(BaseModel):
-    task_type: str  # classification, regression
+    task_type: str
     dataset_id: Optional[str] = None
     row_count: Optional[int] = None
     column_count: Optional[int] = None
-    priority: Optional[str] = "performance"  # performance, speed, interpretability, balanced
+    priority: Optional[str] = "performance"
 
 
 class ModelRecommendationItem(BaseModel):
     model_id: str
     model_name: str
     category: str
-    suitability_score: float  # 0 to 1
+    suitability_score: float
     reasoning: str
     pros_for_dataset: List[str]
     cons_for_dataset: List[str]

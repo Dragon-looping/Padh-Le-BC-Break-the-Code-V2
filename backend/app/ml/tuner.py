@@ -32,7 +32,6 @@ class HyperparameterTuner:
                 code="TASK_MISMATCH",
             )
 
-        # 1. Use safe parameter grid
         grid = param_grid or model_info.get("param_grid")
         if not grid:
             raise BadRequestException(
@@ -40,7 +39,6 @@ class HyperparameterTuner:
                 code="NO_PARAM_GRID",
             )
 
-        # 2. Train baseline before metrics
         base_estimator = get_estimator_instance(model_id)
         base_estimator.fit(prep_result.X_train, prep_result.y_train)
 
@@ -67,14 +65,13 @@ class HyperparameterTuner:
             scoring = "r2"
             cv = KFold(n_splits=cv_folds, shuffle=True, random_state=42)
 
-        # 3. Perform Grid Search
         try:
             grid_search = GridSearchCV(
                 estimator=get_estimator_instance(model_id),
                 param_grid=grid,
                 cv=cv,
                 scoring=scoring,
-                n_jobs=1,  # Keep single threaded for reliability
+                n_jobs=1,
             )
             grid_search.fit(prep_result.X_train, prep_result.y_train)
         except Exception as e:
@@ -85,7 +82,6 @@ class HyperparameterTuner:
         best_estimator = grid_search.best_estimator_
         best_params = grid_search.best_params_
 
-        # 4. Evaluate after metrics
         y_pred_tuned_test = best_estimator.predict(prep_result.X_test)
         y_pred_tuned_train = best_estimator.predict(prep_result.X_train)
 
@@ -128,7 +124,6 @@ class HyperparameterTuner:
                 "Tuning produced marginal or negligible improvement on the hold-out test set."
             )
 
-        # Clean params for JSON serialization
         clean_best_params = {
             k: v if isinstance(v, (int, float, str, bool)) or v is None else str(v)
             for k, v in best_params.items()

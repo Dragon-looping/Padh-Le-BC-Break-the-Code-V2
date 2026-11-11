@@ -33,10 +33,8 @@ export function ExperimentResultsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Selected model for detailed view & tuning
   const [activeModelId, setActiveModelId] = useState<string | null>(null);
 
-  // Hyperparameter Tuning State
   const [tuning, setTuning] = useState(false);
   const [tuneFolds, setTuneFolds] = useState<number>(3);
   const [tuneResult, setTuneResult] = useState<ExperimentTuneResponse | null>(null);
@@ -85,7 +83,6 @@ export function ExperimentResultsPage() {
         cv_folds: tuneFolds,
       });
       setTuneResult(res);
-      // Reload experiment to reflect tuned status in results
       loadData(experimentId);
     } catch (err: any) {
       setTuneError(err.message || 'Tuning optimization failed.');
@@ -122,7 +119,6 @@ export function ExperimentResultsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-body">
-      {/* Top Navigation & Status Bar */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <Link
           to={`/model-lab?dataset=${experiment.dataset_id}`}
@@ -134,7 +130,6 @@ export function ExperimentResultsPage() {
         <ProvenanceBadge type="backend-result" subtext="Computed by scikit-learn" />
       </div>
 
-      {/* Header — Dense Mono Lab Header */}
       <header className="border-b border-graphite-700 pb-8 mb-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -156,7 +151,6 @@ export function ExperimentResultsPage() {
           </div>
         </div>
 
-        {/* Global Warnings Panel if any returned */}
         {experiment.warnings && experiment.warnings.length > 0 && (
           <div className="mt-6">
             <Callout variant="warning" title="Dataset & Validation Warnings">
@@ -170,7 +164,6 @@ export function ExperimentResultsPage() {
         )}
       </header>
 
-      {/* ---------------- BACKEND RECOMMENDATION & TRADE-OFFS ---------------- */}
       {comparison && (
         <section className="mb-10 p-6 border-l-4 border-l-cyan-400 border border-graphite-700 bg-graphite-800/40 rounded-sm space-y-4">
           <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -197,7 +190,6 @@ export function ExperimentResultsPage() {
         </section>
       )}
 
-      {/* ---------------- SIDE-BY-SIDE COMPARISON TABLE ---------------- */}
       <section className="mb-12 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400 flex items-center gap-1.5">
@@ -313,7 +305,6 @@ export function ExperimentResultsPage() {
           </table>
         </div>
 
-        {/* ---------------- BEGINNER METRIC GLOSSARY & TRADEOFF GUIDE ---------------- */}
         <div className="p-6 border border-graphite-700 bg-graphite-850/30 rounded-sm space-y-4">
           <div className="flex items-center gap-2">
             <Info className="w-4 h-4 text-cyan-400" />
@@ -389,7 +380,6 @@ export function ExperimentResultsPage() {
             )}
           </div>
 
-          {/* Contextual Clinical Note for Breast Cancer Dataset */}
           {isClassification &&
             (experiment.target_column.toLowerCase().includes('diag') ||
               experiment.results.some((r) =>
@@ -407,7 +397,6 @@ export function ExperimentResultsPage() {
         </div>
       </section>
 
-      {/* ---------------- ACTIVE MODEL DETAILED INSPECTOR ---------------- */}
       {activeResult && (
         <div className="space-y-8 p-6 border border-graphite-700 bg-graphite-850/40 rounded-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-graphite-700/80 pb-4">
@@ -427,14 +416,12 @@ export function ExperimentResultsPage() {
             </div>
           </div>
 
-          {/* Overfitting alert if reported by backend */}
           {activeResult.overfitting_warning && (
             <Callout variant="warning" title="Generalization Warning">
               {activeResult.overfitting_warning}
             </Callout>
           )}
 
-          {/* Confusion Matrix (Classification only) */}
           {isClassification && activeResult.metrics.confusion_matrix && (
             <section className="space-y-3">
               <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
@@ -491,7 +478,6 @@ export function ExperimentResultsPage() {
             </section>
           )}
 
-          {/* Cross Validation Summary if provided */}
           {activeResult.cv_scores && (
             <section className="space-y-2">
               <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
@@ -510,7 +496,6 @@ export function ExperimentResultsPage() {
             </section>
           )}
 
-          {/* ---------------- HYPERPARAMETER TUNING SECTION ---------------- */}
           <section className="pt-6 border-t border-graphite-700/80 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -557,7 +542,6 @@ export function ExperimentResultsPage() {
               </Callout>
             )}
 
-            {/* Tuning Before / After Delta Card */}
             {tuneResult && (
               <div className="p-5 border border-lime-400/40 bg-lime-400/5 rounded-sm space-y-4 font-mono text-xs">
                 <div className="flex items-center justify-between">
@@ -573,7 +557,6 @@ export function ExperimentResultsPage() {
                   {tuneResult.improvement_summary}
                 </p>
 
-                {/* Before / After Comparison Table */}
                 <div className="overflow-x-auto border border-graphite-700 bg-ink-950">
                   <table className="w-full text-left">
                     <thead className="border-b border-graphite-700 text-steel-500 uppercase text-[11px]">

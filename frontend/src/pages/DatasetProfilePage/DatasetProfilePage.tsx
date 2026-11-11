@@ -96,7 +96,6 @@ export function DatasetProfilePage() {
           </Link>
         </div>
 
-        {/* Stats Grid */}
         <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
           <div className="p-4 border border-graphite-700 bg-graphite-800/40">
             <div className="text-xs text-steel-500 uppercase">Total Rows</div>
@@ -125,7 +124,6 @@ export function DatasetProfilePage() {
         </div>
       </header>
 
-      {/* Column Breakdown Table */}
       <section className="space-y-4">
         <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
           Column Summaries & Inferred Types
@@ -175,7 +173,6 @@ export function DatasetProfilePage() {
         </div>
       </section>
 
-      {/* Raw Preview */}
       <section className="space-y-4 pt-8">
         <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
           Raw Preview Sample

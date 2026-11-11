@@ -17,7 +17,6 @@ class LearningService:
         self._load_all_content()
 
     def _load_all_content(self) -> None:
-        # 1. Load concepts
         foundations_file = self.content_dir / "foundations.json"
         if foundations_file.exists():
             with open(foundations_file, "r", encoding="utf-8") as f:
@@ -26,7 +25,6 @@ class LearningService:
                     concept = ConceptBase(**item)
                     self._concepts[concept.id] = concept
 
-        # 2. Load Unit Lessons (unit_1.json through unit_5.json)
         for unit_file in sorted(self.content_dir.glob("unit_*.json")):
             with open(unit_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -34,7 +32,6 @@ class LearningService:
                     lesson = LessonDetail(**item)
                     self._lessons[lesson.id] = lesson
 
-        # 3. Load Algorithms (regression.json, classification.json, unsupervised.json)
         for algo_file in ["regression.json", "classification.json", "unsupervised.json"]:
             path = self.content_dir / algo_file
             if path.exists():
@@ -44,7 +41,6 @@ class LearningService:
                         algo = AlgorithmDetail(**item)
                         self._algorithms[algo.id] = algo
 
-    # Concepts
     def list_concepts(
         self, category: Optional[str] = None, level: Optional[str] = None
     ) -> ConceptListResponse:
@@ -72,7 +68,6 @@ class LearningService:
             )
         return self._concepts[concept_id]
 
-    # Lessons
     def list_lessons(self, unit: Optional[str] = None) -> LessonListResponse:
         units_dict: Dict[str, Dict[str, List[LessonSummary]]] = {}
 
@@ -112,7 +107,6 @@ class LearningService:
             )
         return self._lessons[lesson_id]
 
-    # Algorithms
     def list_algorithms(
         self,
         category: Optional[str] = None,

@@ -4,15 +4,12 @@ def test_list_algorithms(client):
     data = response.json()
     assert data["total"] >= 15
     algo_ids = [a["id"] for a in data["algorithms"]]
-    # Regression algorithms
     assert "linear_regression" in algo_ids
     assert "ridge_regression" in algo_ids
     assert "random_forest_regressor" in algo_ids
-    # Classification algorithms
     assert "logistic_regression" in algo_ids
     assert "random_forest_classifier" in algo_ids
     assert "naive_bayes" in algo_ids
-    # Unsupervised algorithms
     assert "kmeans" in algo_ids
     assert "pca" in algo_ids
 
@@ -23,7 +20,6 @@ def test_trainable_only_filter(client):
     data = response.json()
     for algo in data["algorithms"]:
         assert algo["training_supported"] is True
-    # Unsupervised algorithms should not be in trainable-only list
     algo_ids = [a["id"] for a in data["algorithms"]]
     assert "kmeans" not in algo_ids
     assert "pca" not in algo_ids

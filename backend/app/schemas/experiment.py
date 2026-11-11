@@ -5,11 +5,11 @@ from pydantic import BaseModel, Field
 class ExperimentCreateRequest(BaseModel):
     dataset_id: str
     target_column: str
-    task_type: Optional[str] = None  # classification or regression
+    task_type: Optional[str] = None
     model_ids: List[str] = Field(..., min_length=1)
     test_size: float = Field(0.2, ge=0.05, le=0.5)
     random_state: int = Field(42, ge=0)
-    priority: str = Field("performance")  # performance, speed, interpretability, balanced
+    priority: str = Field("performance")
     hyperparameters: Optional[Dict[str, Dict[str, Any]]] = None
 
 

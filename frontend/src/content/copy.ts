@@ -1,7 +1,3 @@
-/**
- * Authoritative marketing and educational copy
- * Keep headline and subline here so they are easily editable
- */
 
 export const COPY = {
   hero: {

@@ -47,7 +47,6 @@ describe('Simulation Maths & KNN Engine', () => {
       k: 3,
     });
 
-    // 2 votes for Class 0, 1 vote for Class 1 -> Winner: Class 0
     expect(result.voteCounts[0]).toBe(2);
     expect(result.voteCounts[1]).toBe(1);
     expect(result.predictedLabel).toBe(0);
@@ -77,7 +76,6 @@ describe('Simulation Maths & KNN Engine', () => {
   });
 
   it('handles vote ties deterministically using closest neighbor distance', () => {
-    // 2 points for class 0, 2 points for class 1 with equal votes when K=2
     const tiePoints: KnnPoint[] = [
       { x: 5, y: 0, label: 0 },  // distance to (0,0) = 5
       { x: 10, y: 0, label: 1 }, // distance to (0,0) = 10
@@ -94,13 +92,11 @@ describe('Simulation Maths & KNN Engine', () => {
     expect(result.voteCounts[0]).toBe(1);
     expect(result.voteCounts[1]).toBe(1);
     expect(result.isTie).toBe(true);
-    // Class 0 wins because its nearest neighbor (dist 5) is closer than class 1 (dist 10)
     expect(result.predictedLabel).toBe(0);
     expect(result.tieBreakReason).toContain('broken deterministically');
   });
 
   it('computes Ordinary Least Squares slope, intercept and R2', () => {
-    // Exact line: y = 2x + 1
     const points = [
       { x: 1, y: 3 },
       { x: 2, y: 5 },

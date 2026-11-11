@@ -37,60 +37,51 @@ import { ConnectionError } from '@/components/feedback/ConnectionError';
 import { ProvenanceBadge } from '@/components/feedback/ProvenanceBadge';
 import { formatBytes } from '@/lib/formatters';
 
-const MAX_SIZE_BYTES = 15 * 1024 * 1024; // 15MB
+const MAX_SIZE_BYTES = 15 * 1024 * 1024;
 
 export function ModelLabPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Stepper state (1: Upload, 2: Profile & Target, 3: Models & Config, 4: Running)
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
-  // Sample datasets state
   const [sampleDatasets, setSampleDatasets] = useState<SampleDatasetInfo[]>([]);
   const [loadingSamples, setLoadingSamples] = useState(false);
   const [loadingSampleId, setLoadingSampleId] = useState<string | null>(null);
   const [sampleLoadError, setSampleLoadError] = useState<string | null>(null);
 
-  // Upload state
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<AppError | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Dataset & Profile state
   const datasetIdFromUrl = searchParams.get('dataset');
   const [datasetId, setDatasetId] = useState<string | null>(datasetIdFromUrl);
   const [profile, setProfile] = useState<DatasetProfileResponse | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState<AppError | null>(null);
 
-  // Target configuration state (Explicit selection, no default target column)
   const [selectedTarget, setSelectedTarget] = useState<string>('');
   const [taskType, setTaskType] = useState<string>('');
   const [configuring, setConfiguring] = useState(false);
   const [configResponse, setConfigResponse] = useState<DatasetConfigureResponse | null>(null);
   const [configError, setConfigError] = useState<AppError | null>(null);
 
-  // Model selection state
   const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
   const [selectedModelIds, setSelectedModelIds] = useState<string[]>([]);
   const [recommendations, setRecommendations] = useState<ModelRecommendationResponse | null>(null);
   const [recommendLoading, setRecommendLoading] = useState(false);
   const [modelsLoading, setModelsLoading] = useState(false);
 
-  // Hyperparameters & Split Settings
   const [testSize, setTestSize] = useState<number>(0.2);
   const [randomSeed, setRandomSeed] = useState<number>(42);
   const [priority, setPriority] = useState<'performance' | 'speed' | 'interpretability' | 'balanced'>('performance');
 
-  // Experiment Execution
   const [experimentRunning, setExperimentRunning] = useState(false);
   const [experimentError, setExperimentError] = useState<AppError | null>(null);
   const [runStatusText, setRunStatusText] = useState<string>('Initializing experiment pipeline...');
 
-  // Load sample datasets catalog on mount
   useEffect(() => {
     let mounted = true;
     setLoadingSamples(true);
@@ -123,14 +114,12 @@ export function ModelLabPage() {
     }
   };
 
-  // Sync datasetId with URL query params
   useEffect(() => {
     if (datasetId) {
       setSearchParams({ dataset: datasetId }, { replace: true });
     }
   }, [datasetId, setSearchParams]);
 
-  // Load Profile if datasetId exists
   useEffect(() => {
     if (!datasetId) return;
 
@@ -163,7 +152,6 @@ export function ModelLabPage() {
     };
   }, [datasetId]);
 
-  // Handle CSV file selection and client-side pre-checks
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
     const selected = e.target.files?.[0];
@@ -204,7 +192,6 @@ export function ModelLabPage() {
     }
   };
 
-  // Configure Target Column & Confirm Task Type
   const handleConfigureTarget = async () => {
     if (!datasetId || !selectedTarget) return;
     setConfiguring(true);
@@ -218,19 +205,16 @@ export function ModelLabPage() {
       setConfigResponse(res);
       setTaskType(res.task_type);
 
-      // Fetch compatible models for this task type
       setModelsLoading(true);
       const modelsData = await getModels({ task_type: res.task_type });
       setAvailableModels(modelsData.models);
 
-      // Pre-select compatible trainable models (up to 3 by default)
       const initialIds = modelsData.models
         .filter((m) => m.training_supported)
         .slice(0, 3)
         .map((m) => m.id);
       setSelectedModelIds(initialIds);
 
-      // Check if a specific model was requested in query param
       const urlModel = searchParams.get('model');
       if (urlModel && modelsData.models.some((m) => m.id === urlModel)) {
         if (!initialIds.includes(urlModel)) {
@@ -247,7 +231,6 @@ export function ModelLabPage() {
     }
   };
 
-  // Request Recommendation from Recommender Engine
   const handleGetRecommendations = async () => {
     if (!profile || !taskType) return;
     setRecommendLoading(true);
@@ -259,7 +242,6 @@ export function ModelLabPage() {
         priority,
       });
       setRecommendations(rec);
-      // Auto-select recommended model IDs that are supported
       if (rec.recommended_model_ids?.length) {
         setSelectedModelIds(rec.recommended_model_ids);
       }
@@ -270,14 +252,12 @@ export function ModelLabPage() {
     }
   };
 
-  // Toggle model selection
   const toggleModel = (id: string) => {
     setSelectedModelIds((prev) =>
       prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]
     );
   };
 
-  // Run Real Experiment
   const handleRunExperiment = async () => {
     if (!datasetId || !selectedTarget || selectedModelIds.length === 0) return;
 
@@ -297,7 +277,6 @@ export function ModelLabPage() {
         priority,
       });
 
-      // Synchronous training completed! Navigate to results page
       navigate(`/experiments/${expRes.experiment_id}`);
     } catch (err: any) {
       setExperimentError(err);
@@ -307,7 +286,6 @@ export function ModelLabPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-body">
-      {/* Cockpit Header with Monospace Step Navigator */}
       <div className="border-b border-graphite-700 pb-6 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -341,7 +319,6 @@ export function ModelLabPage() {
           )}
         </div>
 
-        {/* 4-Step Monospace Breadcrumb Indicator */}
         <div className="mt-8 grid grid-cols-4 gap-2 font-mono text-xs">
           {[
             { s: 1, label: '01. CHOOSE DATASET' },
@@ -367,7 +344,6 @@ export function ModelLabPage() {
         </div>
       </div>
 
-      {/* ---------------- STEP 1: CHOOSE DATASET ---------------- */}
       {step === 1 && (
         <div className="space-y-12">
           {sampleLoadError && (
@@ -376,7 +352,6 @@ export function ModelLabPage() {
             </Callout>
           )}
 
-          {/* OPTION A: EXPLORE WITH SAMPLE DATASETS */}
           <div className="space-y-6">
             <div className="border-b border-graphite-700/80 pb-4">
               <div className="flex items-center gap-2 mb-1.5">
@@ -443,7 +418,6 @@ export function ModelLabPage() {
                           </div>
                         </div>
 
-                        {/* Educational Objectives */}
                         {sample.educational_objectives && sample.educational_objectives.length > 0 && (
                           <div className="space-y-1 pt-1 font-sans text-xs">
                             <span className="font-mono text-[10px] uppercase tracking-wider text-steel-500 font-bold block">
@@ -460,7 +434,6 @@ export function ModelLabPage() {
                           </div>
                         )}
 
-                        {/* Medical / Public Disclaimer if present */}
                         {sample.disclaimer && (
                           <div className="p-2.5 bg-ink-950 border border-graphite-800 rounded-sm text-[10px] text-amber-400/90 font-mono leading-relaxed">
                             <strong>Note: </strong> {sample.disclaimer}
@@ -491,7 +464,6 @@ export function ModelLabPage() {
             )}
           </div>
 
-          {/* DIVIDER */}
           <div className="relative flex items-center justify-center py-2">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-graphite-700" />
@@ -501,7 +473,6 @@ export function ModelLabPage() {
             </div>
           </div>
 
-          {/* OPTION B: UPLOAD YOUR OWN DATASET */}
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="chamfer-panel p-8 border border-graphite-700 bg-graphite-800/30 rounded-sm">
               <div className="flex items-center gap-2 mb-1.5">
@@ -518,7 +489,6 @@ export function ModelLabPage() {
                 Validated against file size limits (15 MB), maximum rows (100,000), and duplicate headers.
               </p>
 
-              {/* Drag & Drop Zone */}
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
@@ -551,7 +521,6 @@ export function ModelLabPage() {
                 </div>
               </div>
 
-              {/* Upload Progress Bar if running */}
               {uploadProgress !== null && uploadProgress > 0 && uploadProgress < 100 && (
                 <div className="mt-4 space-y-1">
                   <div className="flex justify-between text-xs font-mono text-steel-400">
@@ -573,7 +542,6 @@ export function ModelLabPage() {
                 </div>
               )}
 
-              {/* Error Message */}
               {uploadError && (
                 <div className="mt-4">
                   <Callout variant="warning" title={`Error: ${uploadError.code}`}>
@@ -599,7 +567,6 @@ export function ModelLabPage() {
         </div>
       )}
 
-      {/* ---------------- STEP 2: PROFILE & EXPLICIT TARGET PICKER ---------------- */}
       {step === 2 && (
         <div className="space-y-8">
           {profileLoading ? (
@@ -617,7 +584,6 @@ export function ModelLabPage() {
             />
           ) : profile ? (
             <>
-              {/* Profile Metrics Overview */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
                 <div className="p-4 border border-graphite-700 bg-graphite-800/40">
                   <div className="text-xs text-steel-500 uppercase">Total Rows</div>
@@ -645,7 +611,6 @@ export function ModelLabPage() {
                 </div>
               </div>
 
-              {/* Data Preview Table */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="font-mono text-xs uppercase tracking-wider text-steel-400 font-bold">
@@ -679,7 +644,6 @@ export function ModelLabPage() {
                 </div>
               </div>
 
-              {/* Explicit Target Column Picker (Honesty Rule 10: No default target column!) */}
               <div className="p-6 border border-cyan-400/40 bg-cyan-400/5 rounded-sm space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -703,7 +667,6 @@ export function ModelLabPage() {
                       value={selectedTarget}
                       onChange={(e) => {
                         setSelectedTarget(e.target.value);
-                        // Auto-infer suggestion
                         const colProfile = profile.column_profiles.find((c) => c.name === e.target.value);
                         if (colProfile) {
                           if (colProfile.inferred_type === 'numeric' && colProfile.unique_count > 20) {
@@ -765,10 +728,8 @@ export function ModelLabPage() {
         </div>
       )}
 
-      {/* ---------------- STEP 3: MODEL SELECTION & HYPERPARAMETERS ---------------- */}
       {step === 3 && (
         <div className="space-y-8">
-          {/* Target Summary Banner */}
           <div className="p-4 border border-graphite-700 bg-graphite-800/50 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
             <div className="flex items-center gap-3">
               <span className="text-steel-400">Target:</span>
@@ -788,7 +749,6 @@ export function ModelLabPage() {
             </button>
           </div>
 
-          {/* Model Recommendation Engine Trigger */}
           <div className="p-5 border border-cyan-400/30 bg-cyan-400/5 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
@@ -811,7 +771,6 @@ export function ModelLabPage() {
             </Button>
           </div>
 
-          {/* Recommender Output if available */}
           {recommendations && (
             <div className="p-4 border border-graphite-700 bg-ink-950 space-y-3 font-mono text-xs">
               <div className="text-steel-400 uppercase font-semibold">
@@ -831,7 +790,6 @@ export function ModelLabPage() {
             </div>
           )}
 
-          {/* Compatible Model Selection Grid */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-mono text-xs uppercase tracking-wider text-steel-400 font-bold">
@@ -883,7 +841,6 @@ export function ModelLabPage() {
             </div>
           </div>
 
-          {/* Experiment Settings */}
           <div className="p-6 border border-graphite-700 bg-graphite-800/25 rounded-sm space-y-4">
             <h3 className="font-mono text-xs uppercase tracking-wider text-steel-400 font-bold">
               Split & Optimization Settings
@@ -966,7 +923,6 @@ export function ModelLabPage() {
         </div>
       )}
 
-      {/* ---------------- STEP 4: RUNNING STATE ---------------- */}
       {step === 4 && (
         <div className="max-w-md mx-auto py-16 text-center space-y-6">
           <div className="p-8 border border-graphite-700 bg-graphite-800/40 rounded-sm">

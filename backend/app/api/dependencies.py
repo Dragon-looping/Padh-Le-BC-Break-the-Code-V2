@@ -3,5 +3,4 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.database.database import get_db
 
-# Re-export get_db for convenient dependency injection
 __all__ = ["get_db", "Session"]

@@ -94,7 +94,6 @@ export function LessonPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Breadcrumbs & Navigation Back */}
       <div className="mb-6 flex items-center justify-between">
         <Link
           to="/learn"
@@ -108,7 +107,6 @@ export function LessonPage() {
         </span>
       </div>
 
-      {/* Lesson Header */}
       <div className="border-b border-graphite-700 pb-6 mb-8">
         <div className="flex items-center gap-2 mb-2 text-xs font-mono text-lime-400 uppercase tracking-widest font-semibold">
           <BookOpen className="w-4 h-4" />
@@ -119,9 +117,7 @@ export function LessonPage() {
         </h1>
       </div>
 
-      {/* Article Content — Only render sections present in payload */}
       <article className="space-y-10 text-bone-100/90 leading-relaxed text-base sm:text-lg">
-        {/* Learning Objectives */}
         {lesson.learning_objectives && lesson.learning_objectives.length > 0 && (
           <section className="p-5 border border-lime-400/30 bg-lime-400/5 rounded-sm">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-lime-400 mb-3">
@@ -138,7 +134,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Detailed Explanation */}
         {lesson.explanation && (
           <section className="space-y-4">
             <h2 className="text-lg font-mono font-bold uppercase tracking-wider text-lime-400">
@@ -150,7 +145,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Term Definitions */}
         {lesson.definitions && lesson.definitions.length > 0 && (
           <section className="space-y-4">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
@@ -171,7 +165,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Mathematical Explanation */}
         {lesson.mathematical_explanation && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
@@ -184,7 +177,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Real World Example */}
         {lesson.real_world_example && (
           <section className="space-y-2">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
@@ -196,7 +188,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Step by Step Working */}
         {lesson.step_by_step_working && lesson.step_by_step_working.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
@@ -215,7 +206,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Python Implementation */}
         {lesson.python_code && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-lime-400 flex items-center gap-1.5">
@@ -231,7 +221,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Pitfalls & Common Mistakes */}
         {lesson.common_mistakes && lesson.common_mistakes.length > 0 && (
           <Callout variant="warning" title="Common Pitfalls & Mistakes">
             <ul className="list-disc pl-4 space-y-1">
@@ -242,7 +231,6 @@ export function LessonPage() {
           </Callout>
         )}
 
-        {/* Related Concepts */}
         {lesson.related_concepts && lesson.related_concepts.length > 0 && (
           <section className="space-y-3 pt-4 border-t border-graphite-700/60">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-500">
@@ -262,7 +250,6 @@ export function LessonPage() {
           </section>
         )}
 
-        {/* Knowledge Check Quizzes */}
         {lesson.knowledge_check && lesson.knowledge_check.length > 0 && (
           <section className="space-y-6 pt-6 border-t border-graphite-700/80">
             <div className="flex items-center gap-2 text-sm font-mono text-lime-400 font-bold uppercase">
@@ -344,7 +331,6 @@ export function LessonPage() {
         )}
       </article>
 
-      {/* Completion Action Bar */}
       <div className="mt-12 pt-8 border-t border-graphite-700 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           {isCompleted ? (

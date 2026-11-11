@@ -7,7 +7,7 @@ import { Button, MathRenderer } from '@/design-system/primitives';
 interface Point {
   x: number;
   y: number;
-  label?: number; // 0 or 1 for classification
+  label?: number;
 }
 
 export function PlaygroundPage() {
@@ -16,11 +16,9 @@ export function PlaygroundPage() {
     (algorithmId as any) || 'knn'
   );
 
-  // ---------------- KNN Simulation State ----------------
   const [kValue, setKValue] = useState<number>(3);
   const [queryPoint, setQueryPoint] = useState<Point>({ x: 180, y: 140 });
 
-  // Seeded classification points (fixed predictable layout)
   const [knnPoints, setKnnPoints] = useState<Point[]>([
     { x: 60, y: 80, label: 0 },
     { x: 90, y: 120, label: 0 },
@@ -28,7 +26,6 @@ export function PlaygroundPage() {
     { x: 80, y: 160, label: 0 },
     { x: 140, y: 130, label: 0 },
     { x: 110, y: 60, label: 0 },
-    // Class 1 (Lime)
     { x: 260, y: 190, label: 1 },
     { x: 290, y: 220, label: 1 },
     { x: 240, y: 250, label: 1 },
@@ -37,7 +34,6 @@ export function PlaygroundPage() {
     { x: 220, y: 210, label: 1 },
   ]);
 
-  // Compute K nearest neighbours
   const knnResult = useMemo(() => {
     const distances = knnPoints.map((p, idx) => {
       const dx = p.x - queryPoint.x;
@@ -56,7 +52,6 @@ export function PlaygroundPage() {
     return { neighbors, predictedLabel, vote0, vote1 };
   }, [knnPoints, queryPoint, kValue]);
 
-  // ---------------- Linear Regression State ----------------
   const [regressionPoints, setRegressionPoints] = useState<Point[]>([
     { x: 50, y: 240 },
     { x: 100, y: 210 },
@@ -66,7 +61,6 @@ export function PlaygroundPage() {
     { x: 300, y: 80 },
   ]);
 
-  // Calculate Ordinary Least Squares fit for regression points
   const olsFit = useMemo(() => {
     const n = regressionPoints.length;
     if (n < 2) return { m: 0, b: 0, r2: 0 };
@@ -82,7 +76,6 @@ export function PlaygroundPage() {
     const m = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     const b = (sumY - m * sumX) / n;
 
-    // Calculate sum of squared residuals
     const meanY = sumY / n;
     let ssTot = 0, ssRes = 0;
     regressionPoints.forEach((p) => {
@@ -97,7 +90,6 @@ export function PlaygroundPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-body">
-      {/* Header */}
       <div className="border-b border-graphite-700 pb-6 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -119,7 +111,6 @@ export function PlaygroundPage() {
           </Link>
         </div>
 
-        {/* Tab selection */}
         <div className="mt-8 flex gap-2 font-mono text-xs">
           {[
             { id: 'knn', label: 'KNN Classification' },
@@ -140,7 +131,6 @@ export function PlaygroundPage() {
         </div>
       </div>
 
-      {/* ---------------- KNN TAB ---------------- */}
       {activeTab === 'knn' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 p-6 border border-graphite-700 bg-graphite-850/40 rounded-sm space-y-4">
@@ -153,7 +143,6 @@ export function PlaygroundPage() {
               </span>
             </div>
 
-            {/* SVG Interactive Plane */}
             <div className="border border-graphite-700 bg-ink-950 p-2 rounded-sm overflow-hidden flex justify-center">
               <svg
                 width="100%"
@@ -167,7 +156,6 @@ export function PlaygroundPage() {
                   setQueryPoint({ x: Math.round(x), y: Math.round(y) });
                 }}
               >
-                {/* Background grid */}
                 <defs>
                   <pattern id="grid" width="38" height="32" patternUnits="userSpaceOnUse">
                     <path d="M 38 0 L 0 0 0 32" fill="none" stroke="#1D2128" strokeWidth="1" />
@@ -175,7 +163,6 @@ export function PlaygroundPage() {
                 </defs>
                 <rect width="380" height="320" fill="url(#grid)" />
 
-                {/* Lines to K-Nearest Neighbors */}
                 {knnResult.neighbors.map((nb, i) => (
                   <line
                     key={i}
@@ -190,7 +177,6 @@ export function PlaygroundPage() {
                   />
                 ))}
 
-                {/* Sample Points */}
                 {knnPoints.map((p, i) => (
                   <circle
                     key={i}
@@ -203,7 +189,6 @@ export function PlaygroundPage() {
                   />
                 ))}
 
-                {/* Query Point with Pulse */}
                 <circle
                   cx={queryPoint.x}
                   cy={queryPoint.y}
@@ -240,7 +225,6 @@ export function PlaygroundPage() {
             </div>
           </div>
 
-          {/* Controls & Explanation */}
           <div className="space-y-6">
             <div className="p-6 border border-graphite-700 bg-graphite-800/40 rounded-sm space-y-4 font-mono text-xs">
               <h4 className="uppercase font-bold text-bone-100 tracking-wider">
@@ -256,7 +240,7 @@ export function PlaygroundPage() {
                   type="range"
                   min="1"
                   max="7"
-                  step="2" // Odd numbers to avoid tie
+                  step="2"
                   value={kValue}
                   onChange={(e) => setKValue(parseInt(e.target.value))}
                   className="w-full accent-orange-500 cursor-pointer"
@@ -269,7 +253,6 @@ export function PlaygroundPage() {
                 </div>
               </div>
 
-              {/* Vote Breakdown */}
               <div className="p-3 bg-ink-950 border border-graphite-700 space-y-2">
                 <div className="text-steel-400 uppercase text-[11px]">Neighbor Majority Vote:</div>
                 <div className="flex justify-between items-center text-sm font-bold">
@@ -292,7 +275,6 @@ export function PlaygroundPage() {
         </div>
       )}
 
-      {/* ---------------- LINEAR REGRESSION TAB ---------------- */}
       {activeTab === 'linear' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 p-6 border border-graphite-700 bg-graphite-850/40 rounded-sm space-y-4">
@@ -309,7 +291,6 @@ export function PlaygroundPage() {
               <svg width="100%" height="320" viewBox="0 0 380 320" className="select-none max-w-lg">
                 <rect width="380" height="320" fill="#0C0E11" />
 
-                {/* Fitted Line */}
                 <line
                   x1="0"
                   y1={olsFit.b}
@@ -319,7 +300,6 @@ export function PlaygroundPage() {
                   strokeWidth="2.5"
                 />
 
-                {/* Residual Lines */}
                 {regressionPoints.map((p, idx) => {
                   const fittedY = olsFit.m * p.x + olsFit.b;
                   return (
@@ -336,7 +316,6 @@ export function PlaygroundPage() {
                   );
                 })}
 
-                {/* Points */}
                 {regressionPoints.map((p, idx) => (
                   <circle
                     key={idx}

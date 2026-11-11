@@ -4,7 +4,6 @@ def test_list_concepts(client):
     data = response.json()
     assert data["total"] >= 10
     assert len(data["concepts"]) == data["total"]
-    # Check concept fields
     first = data["concepts"][0]
     assert "id" in first
     assert "title" in first

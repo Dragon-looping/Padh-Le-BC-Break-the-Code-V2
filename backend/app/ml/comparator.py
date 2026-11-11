@@ -11,7 +11,6 @@ class ModelComparator:
     ) -> ModelComparisonSummary:
         completed = [r for r in results if r.status == "completed"]
         if not completed:
-            # If all failed
             first = results[0]
             return ModelComparisonSummary(
                 best_model_id=first.model_id,
@@ -24,11 +23,9 @@ class ModelComparator:
 
         if task_type == "classification":
             primary_metric_name = "f1_macro" if "f1_macro" in completed[0].metrics else "accuracy"
-            # Sort function: higher is better
             def score_fn(res: ModelEvaluationResult) -> float:
                 val = float(res.metrics.get(primary_metric_name, 0.0))
                 if priority == "speed":
-                    # Penalize slow models
                     val -= min(res.training_duration_seconds * 0.05, 0.2)
                 elif priority == "interpretability":
                     if res.model_id in ("logistic_regression", "decision_tree_classifier"):
@@ -39,7 +36,6 @@ class ModelComparator:
 
         else:
             primary_metric_name = "r2"
-            # Sort function: higher R² is better
             def score_fn_reg(res: ModelEvaluationResult) -> float:
                 r2 = float(res.metrics.get("r2", -999.0))
                 if priority == "speed":
@@ -88,7 +84,6 @@ class ModelComparator:
                 )
             )
 
-        # Build trade-off narrative
         best_val = best_model.metrics.get(primary_metric_name, 0.0)
         fastest = min(completed, key=lambda x: x.training_duration_seconds)
 

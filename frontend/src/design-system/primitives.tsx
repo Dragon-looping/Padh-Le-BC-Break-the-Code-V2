@@ -5,7 +5,6 @@ import 'katex/dist/katex.min.css';
 import { MathRenderer } from '../components/common/MathRenderer';
 export { MathRenderer } from '../components/common/MathRenderer';
 
-// ---------------- Button ----------------
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'cyan-solid' | 'outline' | 'ghost' | 'lime-solid' | 'danger';
   size?: 'sm' | 'md' | 'lg';
@@ -51,7 +50,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = 'Button';
 
-// ---------------- Chip ----------------
 export interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: 'default' | 'cyan' | 'lime' | 'orange' | 'coral';
 }
@@ -79,7 +77,6 @@ export function Chip({ className, variant = 'default', children, ...props }: Chi
   );
 }
 
-// ---------------- StatusDot ----------------
 export function StatusDot({ status }: { status: 'healthy' | 'unreachable' | 'running' | 'idle' }) {
   const colors = {
     healthy: 'bg-cyan-400 shadow-[0_0_8px_#19E3FF]',
@@ -91,7 +88,6 @@ export function StatusDot({ status }: { status: 'healthy' | 'unreachable' | 'run
   return <span className={clsx('inline-block w-2 h-2 rounded-full', colors[status])} />;
 }
 
-// ---------------- CodeBlock ----------------
 export function CodeBlock({ code, language = 'python', filename }: { code: string; language?: string; filename?: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -132,12 +128,10 @@ export function CodeBlock({ code, language = 'python', filename }: { code: strin
   );
 }
 
-// ---------------- MathBlock (KaTeX) ----------------
 export function MathBlock({ math, displayMode = true }: { math: string; displayMode?: boolean }) {
   return <MathRenderer text={math} block={displayMode} />;
 }
 
-// ---------------- Callout ----------------
 export function Callout({
   variant = 'info',
   title,

@@ -48,7 +48,6 @@ class DatasetService:
         return str(val)
 
     def save_upload(self, db: Session, file: UploadFile) -> DatasetUploadResponse:
-        # 1. Validate file extension
         if not file.filename:
             raise BadRequestException("Uploaded file must have a filename.", code="INVALID_FILENAME")
 
@@ -59,7 +58,6 @@ class DatasetService:
                 code="INVALID_FILE_TYPE",
             )
 
-        # 2. Stream and check file size
         max_bytes = settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
         file_bytes = io.BytesIO()
         total_size = 0
@@ -78,16 +76,13 @@ class DatasetService:
 
         file_bytes.seek(0)
 
-        # 3. Parse CSV safely with Pandas
         try:
-            # First try utf-8, fallback to latin-1 if needed
             content = file_bytes.getvalue()
             try:
                 text_content = content.decode("utf-8")
             except UnicodeDecodeError:
                 text_content = content.decode("latin-1")
 
-            # Check for duplicate column names in the raw CSV header
             lines = [l for l in text_content.strip().splitlines() if l.strip()]
             if lines:
                 raw_header = [h.strip() for h in lines[0].split(",")]
@@ -106,7 +101,6 @@ class DatasetService:
                 f"Failed to parse CSV file: {str(e)}", code="MALFORMED_CSV"
             )
 
-        # 4. Enforce constraints
         if df.empty or len(df) == 0:
             raise InvalidDatasetException(
                 "The CSV file contains no data rows.", code="EMPTY_DATASET"
@@ -129,7 +123,6 @@ class DatasetService:
                 code="MAX_COLUMNS_EXCEEDED",
             )
 
-        # Check for duplicate column names
         if len(df.columns) != len(set(df.columns)):
             duplicates = [col for col in df.columns if list(df.columns).count(col) > 1]
             raise InvalidDatasetException(
@@ -137,7 +130,6 @@ class DatasetService:
                 code="DUPLICATE_COLUMNS",
             )
 
-        # 5. Generate secure UUID filename (never use user-supplied path)
         dataset_id = str(uuid.uuid4())
         stored_filename = f"{dataset_id}.csv"
         destination_path = self.upload_dir / stored_filename
@@ -145,10 +137,8 @@ class DatasetService:
         with open(destination_path, "wb") as f:
             f.write(content)
 
-        # 6. Generate initial profile
         profile_data = self._generate_profile_dict(df)
 
-        # 7. Persist metadata in database
         dataset_model = DatasetModel(
             id=dataset_id,
             original_filename=clean_filename,
@@ -205,7 +195,6 @@ class DatasetService:
                     f"Column '{col}' has a constant single value and provides zero predictive variance."
                 )
 
-            # Determine type
             if pd.api.types.is_bool_dtype(series):
                 inferred_type = "boolean"
             elif pd.api.types.is_numeric_dtype(series):
@@ -215,7 +204,6 @@ class DatasetService:
             else:
                 inferred_type = "categorical"
 
-            # Compute stats
             c_min = c_max = c_mean = c_std = c_median = None
             top_cats = None
 
@@ -232,7 +220,6 @@ class DatasetService:
                     )
                     c_median = self._clean_for_json(round(float(non_null.median()), 4))
             else:
-                # Categorical frequencies
                 counts = series.value_counts(dropna=True).head(5)
                 top_cats = [
                     {
@@ -247,7 +234,6 @@ class DatasetService:
                         f"Categorical column '{col}' has high cardinality ({unique_count} distinct categories)."
                     )
 
-            # Sample non-null values
             sample_vals = [
                 self._clean_for_json(v)
                 for v in series.dropna().head(5).tolist()
@@ -270,21 +256,18 @@ class DatasetService:
                 }
             )
 
-        # Preview rows (first 10)
         preview_df = df.head(10).replace({np.nan: None})
         preview_rows = [
             {k: self._clean_for_json(v) for k, v in row.items()}
             for row in preview_df.to_dict(orient="records")
         ]
 
-        # Target class distribution if target is set
         class_dist = None
         if target_column and target_column in df.columns:
             target_series = df[target_column]
             if target_series.nunique() <= 50:
                 dist = target_series.value_counts().to_dict()
                 class_dist = {str(k): int(v) for k, v in dist.items()}
-                # Check imbalance
                 counts = list(dist.values())
                 if len(counts) > 1 and (min(counts) / max(counts) < 0.2):
                     warnings.append(
@@ -409,17 +392,14 @@ class DatasetService:
                 code="INSUFFICIENT_CLASSES",
             )
 
-        # Update dataset record
         dataset.target_column = target_column
         dataset.detected_task = final_task
         dataset.status = "configured"
 
-        # Refresh profile with target distribution
         p = self._generate_profile_dict(df, target_column=target_column)
         dataset.profile_json = json.dumps(p)
         dataset_repo.update(db, dataset)
 
-        # Retrieve compatible trainable models
         compatible_models = [m["id"] for m in get_trainable_models(final_task)]
 
         return DatasetConfigureResponse(

@@ -1,10 +1,4 @@
-/**
- * Authoritative API contract types matching backend FastAPI schemas
- * Source: docs/openapi.json & backend/app/schemas/
- * Keep snake_case field names exactly as returned.
- */
 
-// Error Envelope
 export interface ApiErrorPayload {
   error: {
     code: string;
@@ -21,7 +15,6 @@ export interface AppError {
   isNetworkError?: boolean;
 }
 
-// Health
 export interface HealthResponse {
   status: string;
   project: string;
@@ -31,7 +24,6 @@ export interface HealthResponse {
   database: string;
 }
 
-// Concepts
 export interface ConceptSummary {
   id: string;
   title: string;
@@ -58,7 +50,6 @@ export interface ConceptDetail {
   related_concepts: string[];
 }
 
-// Lessons & Curriculum
 export interface TermDefinition {
   term: string;
   definition: string;
@@ -121,7 +112,6 @@ export interface LessonDetail {
   knowledge_check: QuizQuestion[];
 }
 
-// Algorithms
 export interface ParameterSchema {
   name: string;
   type: string;
@@ -137,8 +127,8 @@ export interface AlgorithmSummary {
   category: string;
   task_type: string;
   short_description: string;
-  curriculum_status: string; // 'in-syllabus' | 'supplementary'
-  learning_content_status: string; // 'available' | 'planned'
+  curriculum_status: string;
+  learning_content_status: string;
   training_supported: boolean;
 }
 
@@ -170,10 +160,9 @@ export interface AlgorithmDetail {
   default_hyperparameters: Record<string, any>;
 }
 
-// Datasets
 export interface ColumnProfile {
   name: string;
-  inferred_type: string; // 'numeric' | 'categorical' | 'datetime' | 'text' | 'boolean'
+  inferred_type: string;
   missing_count: number;
   missing_percentage: number;
   unique_count: number;
@@ -205,7 +194,7 @@ export interface DatasetProfileResponse {
   column_profiles: ColumnProfile[];
   duplicate_rows: number;
   target_column?: string | null;
-  detected_task?: string | null; // 'classification' | 'regression'
+  detected_task?: string | null;
   preview_rows: Record<string, any>[];
   class_distribution?: Record<string, number> | null;
   warnings: string[];
@@ -262,7 +251,6 @@ export interface SampleDatasetListResponse {
 }
 
 
-// Models & Recommendations
 export interface ModelInfo {
   id: string;
   name: string;
@@ -293,7 +281,6 @@ export interface ModelRecommendationResponse {
   recommendations: ModelRecommendationCandidate[];
 }
 
-// Experiments & Evaluation
 export interface ExperimentCreateRequest {
   dataset_id: string;
   target_column: string;
@@ -311,7 +298,6 @@ export interface ModelEvaluationResult {
   category: string;
   hyperparameters: Record<string, any>;
   metrics: {
-    // Classification
     accuracy?: number;
     precision_macro?: number;
     recall_macro?: number;
@@ -320,7 +306,6 @@ export interface ModelEvaluationResult {
     confusion_matrix?: number[][];
     classes?: string[];
     classification_report?: Record<string, any>;
-    // Regression
     mae?: number;
     mse?: number;
     rmse?: number;
@@ -423,7 +408,6 @@ export interface ExperimentReportResponse {
   comparison_table: Array<Record<string, any>>;
 }
 
-// Progress
 export interface LessonProgressItem {
   lesson_id: string;
   completed: boolean;

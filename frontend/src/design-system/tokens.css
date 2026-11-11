@@ -21,7 +21,6 @@
   --duration-slow: 900ms;
 }
 
-/* Static film grain overlay (under 4% opacity) */
 .film-grain {
   position: fixed;
   top: 0;
@@ -34,7 +33,6 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* Chamfered corners (clip-path) for lab panels */
 .chamfer-panel {
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
 }
@@ -43,13 +41,11 @@
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
 }
 
-/* Focus styles: visible 2px lime focus ring with offset */
 :focus-visible {
   outline: 2px solid var(--color-lime-400);
   outline-offset: 2px;
 }
 
-/* Reduced motion overrides */
 body.reduced-motion *,
 body.reduced-motion *::before,
 body.reduced-motion *::after {

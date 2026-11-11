@@ -2,7 +2,6 @@ import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 
-// Lazy-loaded pages as specified in Section 8
 const HomePage = lazy(() => import('@/pages/HomePage/HomePage').then((m) => ({ default: m.HomePage })));
 const LearningHubPage = lazy(() => import('@/pages/LearningHubPage/LearningHubPage').then((m) => ({ default: m.LearningHubPage })));
 const LessonPage = lazy(() => import('@/pages/LessonPage/LessonPage').then((m) => ({ default: m.LessonPage })));

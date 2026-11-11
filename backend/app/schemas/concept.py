@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 class ConceptBase(BaseModel):
     id: str
     title: str
-    level: str = "beginner"  # beginner, intermediate, advanced
-    category: str = "foundations"  # foundations, data, model, evaluation
+    level: str = "beginner"
+    category: str = "foundations"
     short_definition: str
     simple_explanation: str
     real_world_example: str

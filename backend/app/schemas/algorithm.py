@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class ParameterSchema(BaseModel):
     name: str
-    type: str  # int, float, str, bool
+    type: str
     default: Any
     description: str
     allowed_range: Optional[str] = None
@@ -14,11 +14,11 @@ class ParameterSchema(BaseModel):
 class AlgorithmSummary(BaseModel):
     id: str
     name: str
-    category: str  # regression, classification, unsupervised
-    task_type: str  # regression, classification, clustering, dimensionality_reduction
+    category: str
+    task_type: str
     short_description: str
-    curriculum_status: str  # in-syllabus, supplementary
-    learning_content_status: str  # available, planned
+    curriculum_status: str
+    learning_content_status: str
     training_supported: bool
 
 

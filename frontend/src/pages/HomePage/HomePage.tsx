@@ -27,9 +27,7 @@ import {
   calculateEuclideanDistance,
 } from '@/lib/simulationMath';
 
-// Seeded 2D classification training points with clear cluster structures
 const KNN_TRAINING_POINTS: KnnPoint[] = [
-  // Class 0: Cluster Left / Cyan (#19E3FF)
   { x: 75, y: 80, label: 0, name: 'A1' },
   { x: 110, y: 65, label: 0, name: 'A2' },
   { x: 95, y: 115, label: 0, name: 'A3' },
@@ -38,7 +36,6 @@ const KNN_TRAINING_POINTS: KnnPoint[] = [
   { x: 130, y: 145, label: 0, name: 'A6' },
   { x: 165, y: 110, label: 0, name: 'A7' },
 
-  // Class 1: Cluster Right / Lime (#C6FF3D)
   { x: 255, y: 175, label: 1, name: 'B1' },
   { x: 290, y: 150, label: 1, name: 'B2' },
   { x: 275, y: 210, label: 1, name: 'B3' },
@@ -53,28 +50,23 @@ export function HomePage() {
   const [lessons, setLessons] = useState<LessonListResponse | null>(null);
   const [algorithms, setAlgorithms] = useState<AlgorithmSummary[]>([]);
 
-  // Interactive KNN demonstration state
   const [kVal, setKVal] = useState<number>(3);
   const [queryPt, setQueryPt] = useState<{ x: number; y: number }>({ x: 200, y: 140 });
 
   useEffect(() => {
-    // Fetch real curriculum lessons
     getLessons()
       .then(setLessons)
       .catch(() => setLessons(null));
 
-    // Fetch real algorithm library
     getAlgorithms()
       .then((res) => setAlgorithms(res.algorithms))
       .catch(() => setAlgorithms([]));
   }, []);
 
-  // Algorithm category counts derived strictly from backend registry
   const regressionCount = algorithms.filter((a) => a.category === 'regression').length;
   const classificationCount = algorithms.filter((a) => a.category === 'classification').length;
   const unsupervisedCount = algorithms.filter((a) => a.category === 'unsupervised').length;
 
-  // Mathematically computed KNN results
   const knnResult = useMemo(() => {
     return computeKnn({
       trainingPoints: KNN_TRAINING_POINTS,
@@ -89,12 +81,9 @@ export function HomePage() {
 
   return (
     <div className="relative w-full overflow-hidden font-body bg-ink-950 text-bone-100">
-      {/* ---------------- HERO (Signal into Structure) ---------------- */}
       <section className="relative min-h-[88vh] flex flex-col justify-end pb-16 px-4 sm:px-6 lg:px-8 border-b border-graphite-700/80">
-        {/* WebGL Particle Vortex Hero Scene */}
         <HeroScene reducedMotion={reducedMotion} />
 
-        {/* Content Container */}
         <div className="relative z-10 max-w-4xl space-y-6">
           <div className="space-y-4">
             <h1 className="font-display font-black text-4xl sm:text-7xl lg:text-8xl tracking-tight text-bone-100 leading-[0.92]">
@@ -105,7 +94,6 @@ export function HomePage() {
             </p>
           </div>
 
-          {/* Core Navigation CTAs */}
           <div className="pt-4 flex flex-wrap items-center gap-4">
             <Link to="/learn">
               <Button variant="cyan-solid" size="lg" className="gap-2">
@@ -131,7 +119,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ---------------- CHAPTER 01: LEARN (Curriculum Units) ---------------- */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-b border-graphite-700/80 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-graphite-700/60 mb-10 gap-4">
           <div>
@@ -153,7 +140,6 @@ export function HomePage() {
           </Link>
         </div>
 
-        {/* Units Grid */}
         {!lessons ? (
           <div className="p-8 border border-dashed border-graphite-700 text-center font-mono text-xs text-steel-500">
             Loading curriculum modules...
@@ -195,7 +181,6 @@ export function HomePage() {
         )}
       </section>
 
-      {/* ---------------- CHAPTER 02: ALGORITHMS (Taxonomy Panels) ---------------- */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-b border-graphite-700/80 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-graphite-700/60 mb-10 gap-4">
           <div>
@@ -218,7 +203,6 @@ export function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Regression Panel */}
           <div className="p-8 border border-graphite-700 bg-graphite-850/40 rounded-sm flex flex-col justify-between min-h-[340px]">
             <div>
               <div className="h-20 w-full mb-4 border border-graphite-700/60 bg-ink-950 p-2 flex items-center justify-center">
@@ -248,7 +232,6 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Classification Panel */}
           <div className="p-8 border border-graphite-700 bg-graphite-850/40 rounded-sm flex flex-col justify-between min-h-[340px]">
             <div>
               <div className="h-20 w-full mb-4 border border-graphite-700/60 bg-ink-950 p-2 flex items-center justify-center">
@@ -278,7 +261,6 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Unsupervised Panel */}
           <div className="p-8 border border-graphite-700 bg-graphite-850/40 rounded-sm flex flex-col justify-between min-h-[340px]">
             <div>
               <div className="h-20 w-full mb-4 border border-graphite-700/60 bg-ink-950 p-2 flex items-center justify-center">
@@ -311,7 +293,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ---------------- CHAPTER 03: INTERACTIVE KNN DEMONSTRATION ---------------- */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-b border-graphite-700/80 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-graphite-700/60 mb-10 gap-4">
           <div>
@@ -333,10 +314,8 @@ export function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: Interactive 2D Plane */}
           <div className="lg:col-span-7 space-y-4">
             <div className="p-4 border border-graphite-700 bg-ink-950 rounded-sm relative shadow-inner">
-              {/* Coordinate plane header */}
               <div className="flex items-center justify-between text-[11px] font-mono text-steel-400 mb-2 border-b border-graphite-800 pb-2">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1.5">
@@ -353,7 +332,6 @@ export function HomePage() {
                 </div>
               </div>
 
-              {/* SVG Coordinate Canvas */}
               <svg
                 width="100%"
                 height="320"
@@ -366,7 +344,6 @@ export function HomePage() {
                   setQueryPt({ x: Math.max(15, Math.min(405, x)), y: Math.max(15, Math.min(285, y)) });
                 }}
               >
-                {/* Subtle Grid Lines */}
                 <defs>
                   <pattern id="hp-knn-grid" width="30" height="30" patternUnits="userSpaceOnUse">
                     <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#22272e" strokeWidth="0.8" />
@@ -374,7 +351,6 @@ export function HomePage() {
                 </defs>
                 <rect width="420" height="300" fill="url(#hp-knn-grid)" />
 
-                {/* Connecting Lines to K Nearest Neighbors */}
                 {knnResult.nearestNeighbors.map((neighbor) => (
                   <line
                     key={`line-${neighbor.name}`}
@@ -389,7 +365,6 @@ export function HomePage() {
                   />
                 ))}
 
-                {/* Training Data Points */}
                 {KNN_TRAINING_POINTS.map((pt) => {
                   const isNeighbor = knnResult.nearestNeighbors.some(
                     (n) => n.x === pt.x && n.y === pt.y
@@ -398,7 +373,6 @@ export function HomePage() {
 
                   return (
                     <g key={`pt-${pt.name}`}>
-                      {/* Highlight Ring for Selected Neighbors */}
                       {isNeighbor && (
                         <circle
                           cx={pt.x}
@@ -411,7 +385,6 @@ export function HomePage() {
                           className="animate-pulse"
                         />
                       )}
-                      {/* Point Circle */}
                       <circle
                         cx={pt.x}
                         cy={pt.y}
@@ -424,7 +397,6 @@ export function HomePage() {
                   );
                 })}
 
-                {/* Query Point (Draggable Target) */}
                 <g>
                   <circle
                     cx={queryPt.x}
@@ -458,9 +430,7 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Right Column: Mathematical Calculation & Prediction Ledger */}
           <div className="lg:col-span-5 space-y-4">
-            {/* Live Prediction Card */}
             <div className="p-5 border border-graphite-700 bg-graphite-850/50 rounded-sm space-y-4 font-mono text-xs">
               <div className="flex items-center justify-between border-b border-graphite-700/60 pb-3">
                 <span className="text-steel-400 uppercase tracking-wider font-bold">
@@ -469,7 +439,6 @@ export function HomePage() {
                 <span className="text-[11px] text-steel-500 font-mono">K = {kVal}</span>
               </div>
 
-              {/* Classification Outcome Banner */}
               <div
                 className={`p-4 border rounded-sm flex items-center justify-between ${
                   isClass0Winner
@@ -493,7 +462,6 @@ export function HomePage() {
                 </div>
               </div>
 
-              {/* Class Vote Tallies */}
               <div className="space-y-2">
                 <div className="flex justify-between text-[11px]">
                   <span className="text-cyan-400 font-bold">Class A: {votesClass0} votes</span>
@@ -511,7 +479,6 @@ export function HomePage() {
                 </div>
               </div>
 
-              {/* Tie-breaking explanation if applicable */}
               {knnResult.isTie && knnResult.tieBreakReason && (
                 <div className="p-3 border border-orange-500/40 bg-orange-950/20 text-orange-300 text-[11px] rounded-sm font-sans leading-relaxed">
                   <span className="font-bold font-mono">Tie-Breaker Rule: </span>
@@ -519,7 +486,6 @@ export function HomePage() {
                 </div>
               )}
 
-              {/* K Slider Control */}
               <div className="pt-2 border-t border-graphite-700/60 space-y-2">
                 <div className="flex items-center justify-between text-steel-400">
                   <label htmlFor="hp-k-slider" className="font-bold">
@@ -554,7 +520,6 @@ export function HomePage() {
                 />
               </div>
 
-              {/* Selected Neighbors List */}
               <div className="pt-2 border-t border-graphite-700/60">
                 <div className="text-[11px] text-steel-400 uppercase font-bold tracking-wider mb-2">
                   Top {kVal} Nearest Neighbors
@@ -587,7 +552,6 @@ export function HomePage() {
           </div>
         </div>
 
-        {/* Beginner-Friendly Explanation Accordion / Grid */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 font-sans text-xs">
           <div className="p-4 border border-graphite-700/80 bg-graphite-850/30 rounded-sm space-y-1.5">
             <div className="font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -621,7 +585,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ---------------- CHAPTER 04: MODEL LAB & SAMPLE DATASETS ---------------- */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-graphite-700/60 mb-10 gap-4">
           <div>
@@ -643,7 +606,6 @@ export function HomePage() {
           </Link>
         </div>
 
-        {/* Feature Highlights: Built-in Sample Datasets */}
         <div className="p-6 sm:p-8 border border-graphite-700 bg-graphite-850/30 rounded-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -669,7 +631,6 @@ export function HomePage() {
             Beginners can immediately dive into empirical model benchmarking. Explore the standard <strong>Iris Flower Multiclass</strong> dataset or the <strong>Breast Cancer Diagnostic</strong> dataset to analyze accuracy, precision, recall, confusion matrices, and model tradeoffs.
           </p>
 
-          {/* Sample Dataset Badges */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
             <Link
               to="/model-lab"

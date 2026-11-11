@@ -17,7 +17,6 @@ def test_dataset_profiling_and_configuration(client):
     assert upload_res.status_code == 201
     dataset_id = upload_res.json()["dataset_id"]
 
-    # 1. Fetch profile
     profile_res = client.get(f"/api/datasets/{dataset_id}/profile")
     assert profile_res.status_code == 200
     pdata = profile_res.json()
@@ -31,14 +30,12 @@ def test_dataset_profiling_and_configuration(client):
     assert "department" in col_names
     assert "left_company" in col_names
 
-    # Check numeric stats on salary
     salary_profile = next(cp for cp in pdata["column_profiles"] if cp["name"] == "salary")
     assert salary_profile["inferred_type"] == "numeric"
     assert salary_profile["min"] == 50000
     assert salary_profile["max"] == 140000
     assert salary_profile["mean"] > 50000
 
-    # 2. Configure valid target column
     config_res = client.post(
         f"/api/datasets/{dataset_id}/configure",
         json={"target_column": "left_company"},
@@ -57,7 +54,6 @@ def test_invalid_target_column_rejected(client):
     upload_res = client.post("/api/datasets/upload", files={"file": file_tuple})
     dataset_id = upload_res.json()["dataset_id"]
 
-    # Configure non-existent column
     bad_config = client.post(
         f"/api/datasets/{dataset_id}/configure",
         json={"target_column": "target_does_not_exist"},

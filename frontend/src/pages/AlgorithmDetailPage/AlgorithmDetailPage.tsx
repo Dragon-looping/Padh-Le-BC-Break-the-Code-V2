@@ -61,7 +61,6 @@ export function AlgorithmDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Breadcrumb Navigation */}
       <div className="mb-6 flex items-center justify-between">
         <Link
           to="/algorithms"
@@ -77,7 +76,6 @@ export function AlgorithmDetailPage() {
         </div>
       </div>
 
-      {/* Main Header */}
       <header className="border-b border-graphite-700 pb-8 mb-10">
         <div className="flex items-center gap-2 flex-wrap mb-3">
           <Chip variant="cyan">{algo.category}</Chip>
@@ -92,7 +90,6 @@ export function AlgorithmDetailPage() {
             {algo.name}
           </h1>
 
-          {/* Deep link to Model Lab only if trainable */}
           {algo.training_supported ? (
             <Link to={`/model-lab?model=${algo.id}`}>
               <Button variant="cyan-solid" size="md" className="gap-2">
@@ -112,9 +109,7 @@ export function AlgorithmDetailPage() {
         </p>
       </header>
 
-      {/* Structured Sections */}
       <div className="space-y-12 font-sans leading-relaxed text-bone-100">
-        {/* Intuition */}
         {algo.intuition && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
@@ -126,7 +121,6 @@ export function AlgorithmDetailPage() {
           </section>
         )}
 
-        {/* Mathematical Formula */}
         {algo.mathematical_formula && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
@@ -139,7 +133,6 @@ export function AlgorithmDetailPage() {
           </section>
         )}
 
-        {/* Step-by-Step Procedure */}
         {algo.step_by_step_working && algo.step_by_step_working.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400">
@@ -158,7 +151,6 @@ export function AlgorithmDetailPage() {
           </section>
         )}
 
-        {/* Hyperparameters & Configuration */}
         {algo.parameters && algo.parameters.length > 0 && (
           <section className="space-y-4">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-steel-400 flex items-center gap-1.5">
@@ -190,7 +182,6 @@ export function AlgorithmDetailPage() {
           </section>
         )}
 
-        {/* Python Implementation */}
         {algo.python_snippet && (
           <section className="space-y-3">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
@@ -206,7 +197,6 @@ export function AlgorithmDetailPage() {
           </section>
         )}
 
-        {/* Advantages & Limitations */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {algo.advantages && algo.advantages.length > 0 && (
             <div className="p-5 border border-lime-400/30 bg-lime-400/5 rounded-sm space-y-3">
@@ -243,7 +233,6 @@ export function AlgorithmDetailPage() {
           )}
         </div>
 
-        {/* When to Use vs When to Avoid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {algo.when_to_use && algo.when_to_use.length > 0 && (
             <div className="p-5 border border-graphite-700 bg-graphite-800/30 rounded-sm space-y-2">
